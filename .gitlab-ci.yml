@@ -1,0 +1,57 @@
+# To contribute improvements to CI/CD templates, please follow the Development guide at:
+# https://docs.gitlab.com/ee/development/cicd/templates.html
+# This specific template is located at:
+# https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Terraform.latest.gitlab-ci.yml
+
+include:
+  - template: Terraform/Base.latest.gitlab-ci.yml  # https://gitlab.com/gitlab-org/gitlab/blob/master/lib/gitlab/ci/templates/Terraform/Base.latest.gitlab-ci.yml
+  - template: Jobs/SAST-IaC.latest.gitlab-ci.yml   # https://gitlab.com/gitlab-org/gitlab/blob/master/lib/gitlab/ci/templates/Jobs/SAST-IaC.latest.gitlab-ci.yml
+
+image:
+  name: "$CI_TEMPLATE_REGISTRY_HOST/gitlab-org/terraform-images/releases/1.3:latest"
+
+stages:
+  - validate
+  - test
+  - upload
+
+fmt:
+  extends: .terraform:fmt
+  needs: []
+
+validate:
+  extends: .terraform:validate
+  needs: []
+
+markdownlint:
+  stage: validate
+  image:
+    name: registry.gitlab.com/06kellyjac/docker_markdownlint-cli:latest
+    entrypoint:
+      - '/usr/bin/env'
+  before_script:
+    - markdownlint --version
+  script:
+    - markdownlint '**/*.md'
+  rules:
+    - changes:
+      - '**/*.md'
+  needs: []
+
+upload:
+  stage: upload
+  image: curlimages/curl:latest
+  variables:
+    TERRAFORM_MODULE_DIR: ${CI_PROJECT_DIR}
+    TERRAFORM_MODULE_SYSTEM: helm
+    TERRAFORM_MODULE_NAME: ${CI_PROJECT_NAME}
+    TERRAFORM_MODULE_VERSION: ${CI_COMMIT_TAG}
+  script:
+    - TERRAFORM_MODULE_NAME=$(echo "${TERRAFORM_MODULE_NAME}" | tr " _" -)
+    - TERRAFORM_MODULE_VERSION=$(echo "${TERRAFORM_MODULE_VERSION}" | sed -e 's/^v//')
+    - tar -vczf ${TERRAFORM_MODULE_NAME}-${TERRAFORM_MODULE_SYSTEM}-${TERRAFORM_MODULE_VERSION}.tgz -C ${TERRAFORM_MODULE_DIR} --exclude=./.git .
+    - 'curl --location --header "JOB-TOKEN: ${CI_JOB_TOKEN}" 
+         --upload-file ${TERRAFORM_MODULE_NAME}-${TERRAFORM_MODULE_SYSTEM}-${TERRAFORM_MODULE_VERSION}.tgz
+         ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/terraform/modules/${TERRAFORM_MODULE_NAME}/${TERRAFORM_MODULE_SYSTEM}/${TERRAFORM_MODULE_VERSION}/file'
+  rules:
+    - if: $CI_COMMIT_TAG
