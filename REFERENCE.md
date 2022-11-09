@@ -23,7 +23,7 @@
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_generic"></a> [generic](#module\_generic) | usine.solution-libre.fr/french-high-availability-multi-cloud-hosting/generic/helm | 0.1.0 |
+| <a name="module_generic"></a> [generic](#module\_generic) | usine.solution-libre.fr/french-high-availability-multi-cloud-hosting/generic/helm | 0.1.2 |
 
 ## Resources
 

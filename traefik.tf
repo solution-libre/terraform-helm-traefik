@@ -9,12 +9,13 @@ locals {
 
 module "generic" {
   source  = "usine.solution-libre.fr/french-high-availability-multi-cloud-hosting/generic/helm"
-  version = "0.1.0"
+  version = "0.1.2"
 
   helm_release   = var.helm_release
   labels_prefix  = var.labels_prefix
   namespace      = var.namespace
   network_policy = var.network_policy
+  values         = local.values
 }
 
 resource "kubernetes_network_policy" "traefik_allow_ingress" {
