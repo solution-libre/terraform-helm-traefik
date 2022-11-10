@@ -37,11 +37,11 @@ resource "kubernetes_network_policy" "traefik_allow_ingress" {
 
     ingress {
       ports {
-        port     = "http"
+        port     = 8000
         protocol = "TCP"
       }
       ports {
-        port     = "https"
+        port     = 8443
         protocol = "TCP"
       }
 
