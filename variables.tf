@@ -18,6 +18,18 @@ variable "helm_release" {
   })
 }
 
+variable "ingress" {
+  default     = {}
+  description = "Map of ingress"
+  type = map(object({
+    hostname     = string
+    namespace    = string
+    service_name = string
+    service_port = number
+    www_redirect = optional(bool, false)
+  }))
+}
+
 variable "labels_prefix" {
   default     = "solution-libre.fr"
   description = "Custom label prefix used for network policy namespace matching"

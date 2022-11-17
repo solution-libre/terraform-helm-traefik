@@ -58,3 +58,23 @@ resource "kubernetes_network_policy" "traefik_allow_ingress" {
     policy_types = ["Ingress"]
   }
 }
+
+resource "kubernetes_manifest" "ingress_route" {
+  for_each = var.ingress
+
+  manifest = yamldecode(templatefile(
+    "${path.module}/templates/manifests/ingress-route.yaml.tpl",
+    {
+      name         = each.key
+      namespace    = each.value.namespace
+      hostname     = each.value.hostname
+      service_name = each.value.service_name
+      service_port = each.value.service_port
+      www_redirect = each.value.www_redirect
+    }
+  ))
+
+  depends_on = [
+    module.generic
+  ]
+}
