@@ -11,14 +11,14 @@ module "generic" {
   source  = "usine.solution-libre.fr/french-high-availability-multi-cloud-hosting/generic/helm"
   version = "0.2.0"
 
-  helm_release   = var.helm_release
-  namespace      = var.namespace
-  network_policy = var.network_policy
-  values         = local.values
+  helm_release     = var.helm_release
+  namespace        = var.namespace
+  network_policies = var.network_policies
+  values           = local.values
 }
 
 resource "kubernetes_network_policy" "traefik_allow_ingress" {
-  count = var.network_policy.enabled ? 1 : 0
+  count = var.network_policies.allow_ingress_enabled ? 1 : 0
 
   metadata {
     name      = "${module.generic.namespace}-allow-ingress"
@@ -45,7 +45,7 @@ resource "kubernetes_network_policy" "traefik_allow_ingress" {
       }
 
       dynamic "from" {
-        for_each = var.network_policy.ingress_cidrs
+        for_each = var.network_policies.ingress_cidrs
         content {
           ip_block {
             cidr = from.value
@@ -59,7 +59,7 @@ resource "kubernetes_network_policy" "traefik_allow_ingress" {
 }
 
 resource "kubernetes_network_policy" "traefik_allow_cert_manager" {
-  count = (var.network_policy.enabled && var.network_policy.cert_manager.enabled) ? 1 : 0
+  count = var.network_policies.cert_manager.enabled ? 1 : 0
 
   metadata {
     name      = "${module.generic.namespace}-allow-cert-manager"
@@ -82,12 +82,12 @@ resource "kubernetes_network_policy" "traefik_allow_cert_manager" {
       from {
         namespace_selector {
           match_labels = {
-            "kubernetes.io/metadata.name" = var.network_policy.cert_manager.namespace
+            "kubernetes.io/metadata.name" = var.network_policies.cert_manager.namespace
           }
         }
         pod_selector {
           match_labels = {
-            "app.kubernetes.io/name" = var.network_policy.cert_manager.name
+            "app.kubernetes.io/name" = var.network_policies.cert_manager.name
           }
         }
       }

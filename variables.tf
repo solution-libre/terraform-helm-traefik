@@ -42,7 +42,7 @@ variable "namespace" {
   })
 }
 
-variable "network_policy" {
+variable "network_policies" {
   default = {
     enabled       = true
     ingress_cidrs = ["0.0.0.0/0"]
