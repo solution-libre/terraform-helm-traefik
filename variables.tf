@@ -55,6 +55,11 @@ variable "network_policy" {
   }
   description = "Traefik network policy customization"
   type = object({
+    cert_manager = optional(object({
+      enabled   = optional(bool, false)
+      name      = optional(string, "cert-manager")
+      namespace = optional(string, "cert-manager")
+    }), { enable = false, name = "cert-manager", namespace = "cert-manager" })
     enabled       = optional(bool, true)
     ingress_cidrs = optional(list(string), ["0.0.0.0/0"])
   })

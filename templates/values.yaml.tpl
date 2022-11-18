@@ -1,3 +1,5 @@
+additionalArguments:
+  - --entrypoints.web.http.redirections.entrypoint.priority=10
 ingressRoute:
   dashboard:
     enabled: false

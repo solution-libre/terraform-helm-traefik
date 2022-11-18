@@ -30,6 +30,7 @@
 | Name | Type |
 |------|------|
 | [kubernetes_manifest.ingress_route](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
+| [kubernetes_network_policy.traefik_allow_cert_manager](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/network_policy) | resource |
 | [kubernetes_network_policy.traefik_allow_ingress](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/network_policy) | resource |
 
 ## Inputs
@@ -40,7 +41,7 @@
 | <a name="input_ingress"></a> [ingress](#input\_ingress) | Map of ingress | <pre>map(object({<br>    hostname     = string<br>    namespace    = string<br>    service_name = string<br>    service_port = number<br>    www_redirect = optional(bool, false)<br>  }))</pre> | `{}` | no |
 | <a name="input_labels_prefix"></a> [labels\_prefix](#input\_labels\_prefix) | Custom label prefix used for network policy namespace matching | `string` | `"solution-libre.fr"` | no |
 | <a name="input_namespace"></a> [namespace](#input\_namespace) | Traefik namespace customization | <pre>object({<br>    create = optional(bool, true)<br>    name   = optional(string, "traefik")<br>  })</pre> | <pre>{<br>  "create": true,<br>  "name": "traefik"<br>}</pre> | no |
-| <a name="input_network_policy"></a> [network\_policy](#input\_network\_policy) | Traefik network policy customization | <pre>object({<br>    enabled       = optional(bool, true)<br>    ingress_cidrs = optional(list(string), ["0.0.0.0/0"])<br>  })</pre> | <pre>{<br>  "enabled": true,<br>  "ingress_cidrs": [<br>    "0.0.0.0/0"<br>  ]<br>}</pre> | no |
+| <a name="input_network_policy"></a> [network\_policy](#input\_network\_policy) | Traefik network policy customization | <pre>object({<br>    cert_manager = optional(object({<br>      enabled   = optional(bool, false)<br>      name      = optional(string, "cert-manager")<br>      namespace = optional(string, "cert-manager")<br>    }), { enable = false, name = "cert-manager", namespace = "cert-manager" })<br>    enabled       = optional(bool, true)<br>    ingress_cidrs = optional(list(string), ["0.0.0.0/0"])<br>  })</pre> | <pre>{<br>  "enabled": true,<br>  "ingress_cidrs": [<br>    "0.0.0.0/0"<br>  ]<br>}</pre> | no |
 
 ## Outputs
 

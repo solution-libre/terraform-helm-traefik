@@ -59,6 +59,45 @@ resource "kubernetes_network_policy" "traefik_allow_ingress" {
   }
 }
 
+resource "kubernetes_network_policy" "traefik_allow_cert_manager" {
+  count = (var.network_policy.enabled && var.network_policy.cert_manager.enabled) ? 1 : 0
+
+  metadata {
+    name      = "${module.generic.namespace}-allow-cert-manager"
+    namespace = module.generic.namespace
+  }
+
+  spec {
+    pod_selector {
+      match_labels = {
+        "app.kubernetes.io/name" = "traefik"
+      }
+    }
+
+    ingress {
+      ports {
+        port     = 8000
+        protocol = "TCP"
+      }
+
+      from {
+        namespace_selector {
+          match_labels = {
+            name = var.network_policy.cert_manager.namespace
+          }
+        }
+        pod_selector {
+          match_labels = {
+            "app.kubernetes.io/name" = var.network_policy.cert_manager.name
+          }
+        }
+      }
+    }
+
+    policy_types = ["Ingress"]
+  }
+}
+
 resource "kubernetes_manifest" "ingress_route" {
   for_each = var.ingress
 
