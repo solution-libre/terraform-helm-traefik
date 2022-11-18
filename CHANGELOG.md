@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- markdownlint-configure-file { "MD024": { "allow_different_nesting": true } } -->
 
+## [0.3.0] 2022-11-18
+
+### Added
+
+- Add input variables to enable each Network Policy one by one
+
+### Changed
+
+- Upgrade of the generic module to v0.2.0
+- Use `kubernetes.io/metadata.name` label instead of `name` to match namespace in Network Policies
+
+### Removed
+
+- Remove input variable `labels_prefix`
+
 ## [0.2.1] 2022-11-18
 
 ### Added
@@ -41,6 +56,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Terraform module creation
 
+[0.3.0]: https://usine.solution-libre.fr/french-high-availability-multi-cloud-hosting/terraform-modules/traefik/-/compare/v0.2.1...v0.3.0
 [0.2.1]: https://usine.solution-libre.fr/french-high-availability-multi-cloud-hosting/terraform-modules/traefik/-/compare/v0.2.0...v0.2.1
 [0.2.0]: https://usine.solution-libre.fr/french-high-availability-multi-cloud-hosting/terraform-modules/traefik/-/compare/v0.1.2...v0.2.0
 [0.1.2]: https://usine.solution-libre.fr/french-high-availability-multi-cloud-hosting/terraform-modules/traefik/-/compare/v0.1.1...v0.1.2

@@ -23,7 +23,7 @@
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_generic"></a> [generic](#module\_generic) | usine.solution-libre.fr/french-high-availability-multi-cloud-hosting/generic/helm | 0.1.2 |
+| <a name="module_generic"></a> [generic](#module\_generic) | usine.solution-libre.fr/french-high-availability-multi-cloud-hosting/generic/helm | 0.2.0 |
 
 ## Resources
 
@@ -39,9 +39,8 @@
 |------|-------------|------|---------|:--------:|
 | <a name="input_helm_release"></a> [helm\_release](#input\_helm\_release) | Traefik Helm release customization | <pre>object({<br>    extra_values        = optional(string)<br>    chart               = optional(string, "traefik")<br>    chart_version       = optional(string, "17.0.5")<br>    name                = optional(string, "traefik")<br>    repository          = optional(string, "https://helm.traefik.io/traefik")<br>    timeout             = optional(number, 900)<br>    service_annotations = optional(string)<br>  })</pre> | <pre>{<br>  "chart": "traefik",<br>  "chart_version": "17.0.5",<br>  "name": "traefik",<br>  "repository": "https://helm.traefik.io/traefik",<br>  "timeout": 900<br>}</pre> | no |
 | <a name="input_ingress"></a> [ingress](#input\_ingress) | Map of ingress | <pre>map(object({<br>    hostname     = string<br>    namespace    = string<br>    service_name = string<br>    service_port = number<br>    www_redirect = optional(bool, false)<br>  }))</pre> | `{}` | no |
-| <a name="input_labels_prefix"></a> [labels\_prefix](#input\_labels\_prefix) | Custom label prefix used for network policy namespace matching | `string` | `"solution-libre.fr"` | no |
 | <a name="input_namespace"></a> [namespace](#input\_namespace) | Traefik namespace customization | <pre>object({<br>    create = optional(bool, true)<br>    name   = optional(string, "traefik")<br>  })</pre> | <pre>{<br>  "create": true,<br>  "name": "traefik"<br>}</pre> | no |
-| <a name="input_network_policy"></a> [network\_policy](#input\_network\_policy) | Traefik network policy customization | <pre>object({<br>    cert_manager = optional(object({<br>      enabled   = optional(bool, false)<br>      name      = optional(string, "cert-manager")<br>      namespace = optional(string, "cert-manager")<br>    }), { enable = false, name = "cert-manager", namespace = "cert-manager" })<br>    enabled       = optional(bool, true)<br>    ingress_cidrs = optional(list(string), ["0.0.0.0/0"])<br>  })</pre> | <pre>{<br>  "enabled": true,<br>  "ingress_cidrs": [<br>    "0.0.0.0/0"<br>  ]<br>}</pre> | no |
+| <a name="input_network_policy"></a> [network\_policy](#input\_network\_policy) | Traefik network policy customization | <pre>object({<br>    allow_ingress_enabled    = optional(bool, true)<br>    allow_monitoring_enabled = optional(bool, false)<br>    allow_namespace_enabled  = optional(bool, true)<br>    cert_manager = optional(object({<br>      enabled   = optional(bool, false)<br>      name      = optional(string, "cert-manager")<br>      namespace = optional(string, "cert-manager")<br>    }), {})<br>    default_deny_enabled = optional(bool, true)<br>    ingress_cidrs        = optional(list(string), ["0.0.0.0/0"])<br>  })</pre> | <pre>{<br>  "enabled": true,<br>  "ingress_cidrs": [<br>    "0.0.0.0/0"<br>  ]<br>}</pre> | no |
 
 ## Outputs
 

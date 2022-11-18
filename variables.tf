@@ -30,12 +30,6 @@ variable "ingress" {
   }))
 }
 
-variable "labels_prefix" {
-  default     = "solution-libre.fr"
-  description = "Custom label prefix used for network policy namespace matching"
-  type        = string
-}
-
 variable "namespace" {
   default = {
     create = true
@@ -55,12 +49,15 @@ variable "network_policy" {
   }
   description = "Traefik network policy customization"
   type = object({
+    allow_ingress_enabled    = optional(bool, true)
+    allow_monitoring_enabled = optional(bool, false)
+    allow_namespace_enabled  = optional(bool, true)
     cert_manager = optional(object({
       enabled   = optional(bool, false)
       name      = optional(string, "cert-manager")
       namespace = optional(string, "cert-manager")
-    }), { enable = false, name = "cert-manager", namespace = "cert-manager" })
-    enabled       = optional(bool, true)
-    ingress_cidrs = optional(list(string), ["0.0.0.0/0"])
+    }), {})
+    default_deny_enabled = optional(bool, true)
+    ingress_cidrs        = optional(list(string), ["0.0.0.0/0"])
   })
 }

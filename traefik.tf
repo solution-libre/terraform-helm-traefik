@@ -9,10 +9,9 @@ locals {
 
 module "generic" {
   source  = "usine.solution-libre.fr/french-high-availability-multi-cloud-hosting/generic/helm"
-  version = "0.1.2"
+  version = "0.2.0"
 
   helm_release   = var.helm_release
-  labels_prefix  = var.labels_prefix
   namespace      = var.namespace
   network_policy = var.network_policy
   values         = local.values
@@ -83,7 +82,7 @@ resource "kubernetes_network_policy" "traefik_allow_cert_manager" {
       from {
         namespace_selector {
           match_labels = {
-            name = var.network_policy.cert_manager.namespace
+            "kubernetes.io/metadata.name" = var.network_policy.cert_manager.namespace
           }
         }
         pod_selector {
