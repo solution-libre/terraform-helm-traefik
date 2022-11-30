@@ -10,7 +10,6 @@
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3.0 |
-| <a name="requirement_helm"></a> [helm](#requirement\_helm) | ~> 2.0 |
 | <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | ~> 2.0 |
 
 ## Providers
@@ -30,7 +29,6 @@
 | Name | Type |
 |------|------|
 | [kubernetes_manifest.ingress_route](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
-| [kubernetes_network_policy.traefik_allow_cert_manager](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/network_policy) | resource |
 | [kubernetes_network_policy.traefik_allow_ingress](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/network_policy) | resource |
 
 ## Inputs
@@ -40,7 +38,7 @@
 | <a name="input_helm_release"></a> [helm\_release](#input\_helm\_release) | Traefik Helm release customization | <pre>object({<br>    extra_values        = optional(string)<br>    chart               = optional(string, "traefik")<br>    chart_version       = optional(string, "17.0.5")<br>    name                = optional(string, "traefik")<br>    repository          = optional(string, "https://helm.traefik.io/traefik")<br>    timeout             = optional(number, 900)<br>    service_annotations = optional(string)<br>  })</pre> | <pre>{<br>  "chart": "traefik",<br>  "chart_version": "17.0.5",<br>  "name": "traefik",<br>  "repository": "https://helm.traefik.io/traefik",<br>  "timeout": 900<br>}</pre> | no |
 | <a name="input_ingress"></a> [ingress](#input\_ingress) | Map of ingress | <pre>map(object({<br>    hostname     = string<br>    namespace    = string<br>    service_name = string<br>    service_port = number<br>    www_redirect = optional(bool, false)<br>  }))</pre> | `{}` | no |
 | <a name="input_namespace"></a> [namespace](#input\_namespace) | Traefik namespace customization | <pre>object({<br>    create = optional(bool, true)<br>    name   = optional(string, "traefik")<br>  })</pre> | <pre>{<br>  "create": true,<br>  "name": "traefik"<br>}</pre> | no |
-| <a name="input_network_policies"></a> [network\_policies](#input\_network\_policies) | Traefik network policy customization | <pre>object({<br>    allow_ingress_enabled    = optional(bool, true)<br>    allow_monitoring_enabled = optional(bool, false)<br>    allow_namespace_enabled  = optional(bool, true)<br>    cert_manager = optional(object({<br>      enabled   = optional(bool, false)<br>      name      = optional(string, "cert-manager")<br>      namespace = optional(string, "cert-manager")<br>    }), {})<br>    default_deny_enabled = optional(bool, true)<br>    ingress_cidrs        = optional(list(string), ["0.0.0.0/0"])<br>  })</pre> | <pre>{<br>  "enabled": true,<br>  "ingress_cidrs": [<br>    "0.0.0.0/0"<br>  ]<br>}</pre> | no |
+| <a name="input_network_policies"></a> [network\_policies](#input\_network\_policies) | Traefik network policies customization | <pre>object({<br>    allow_ingress_enabled    = optional(bool, true)<br>    allow_monitoring_enabled = optional(bool, false)<br>    allow_namespace_enabled  = optional(bool, true)<br>    default_deny_enabled     = optional(bool, true)<br>    ingress_cidrs            = optional(list(string), ["0.0.0.0/0"])<br>  })</pre> | <pre>{<br>  "allow_ingress_enabled": true,<br>  "allow_monitoring_enabled": false,<br>  "allow_namespace_enabled": true,<br>  "default_deny_enabled": true,<br>  "ingress_cidrs": [<br>    "0.0.0.0/0"<br>  ]<br>}</pre> | no |
 
 ## Outputs
 
