@@ -1,12 +1,3 @@
-locals {
-  values = templatefile(
-    "${path.module}/templates/values.yaml.tpl",
-    {
-      service_annotations = var.helm_release.service_annotations
-    }
-  )
-}
-
 module "generic" {
   source  = "usine.solution-libre.fr/french-high-availability-multi-cloud-hosting/generic/helm"
   version = "0.2.0"
@@ -14,7 +5,13 @@ module "generic" {
   helm_release     = var.helm_release
   namespace        = var.namespace
   network_policies = var.network_policies
-  values           = local.values
+
+  values = templatefile(
+    "${path.module}/templates/values.yaml.tpl",
+    {
+      service_annotations = var.helm_release.service_annotations
+    }
+  )
 }
 
 resource "kubernetes_network_policy" "traefik_allow_ingress" {
