@@ -9,6 +9,8 @@ module "generic" {
   values = templatefile(
     "${path.module}/templates/values.yaml.tpl",
     {
+      name                = var.helm_release.name
+      namespace           = var.namespace.name
       service_annotations = var.helm_release.service_annotations
     }
   )
@@ -78,4 +80,24 @@ resource "kubernetes_manifest" "ingress_route" {
   depends_on = [
     module.generic
   ]
+}
+
+resource "kubernetes_manifest" "middleware" {
+  manifest = yamldecode(templatefile(
+    "${path.module}/templates/manifests/middleware.yaml.tpl",
+    {
+      name      = var.helm_release.name
+      namespace = module.generic.namespace
+    }
+  ))
+}
+
+resource "kubernetes_manifest" "tls_options" {
+  manifest = yamldecode(templatefile(
+    "${path.module}/templates/manifests/tls-options.yaml.tpl",
+    {
+      name      = var.helm_release.name
+      namespace = module.generic.namespace
+    }
+  ))
 }

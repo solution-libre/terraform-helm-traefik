@@ -11,11 +11,24 @@
 
 ## Description
 
-ToDo
+[Terraform](https://www.terraform.io/) module that allows you to deploy and configure [Træfik](https://traefik.io/traefik/).
 
 ## Usage
 
-ToDo
+```terraform
+module "traefik" {
+  source  = "usine.solution-libre.fr/french-high-availability-multi-cloud-hosting/traefik/helm"
+
+  ingress = {
+    website = {
+      hostname     = "domain.tld"
+      namespace    = "default"
+      service_name = "website"
+      service_port = 80
+    }
+  }
+}
+```
 
 ## Reference
 

@@ -12,8 +12,12 @@ ports:
     proxyProtocol:
       trustedIPs: ["127.0.0.1/32", "10.0.0.0/8", "100.64.0.0/10"]
   websecure:
+    middlewares:
+      - ${namespace}-${name}-default@kubernetescrd
     proxyProtocol:
       trustedIPs: ["127.0.0.1/32", "10.0.0.0/8", "100.64.0.0/10"]
+    tls:
+      options: ${namespace}-${name}-default@kubernetescrd
 service:
 %{if service_annotations != null}
   annotations: ${indent(4, service_annotations)}

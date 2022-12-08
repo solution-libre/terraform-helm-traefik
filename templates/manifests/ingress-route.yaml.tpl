@@ -7,15 +7,15 @@ spec:
   entryPoints:
     - websecure
   routes:
-  - match: Host(`${hostname}`)%{ if www_redirect } || Host(`www.${hostname}`)%{ endif }
-    kind: Rule
+    - match: Host(`${hostname}`)%{ if www_redirect } || Host(`www.${hostname}`)%{ endif }
+      kind: Rule
 %{ if www_redirect }
-    middlewares:
-    - name: www-redirectregex
+      middlewares:
+        - name: www-redirectregex
 %{ endif }
-    services:
-    - name: ${service_name}
-      port: ${service_port}
+      services:
+        - name: ${service_name}
+          port: ${service_port}
   tls:
     secretName: ${hostname}
 %{ if www_redirect }
