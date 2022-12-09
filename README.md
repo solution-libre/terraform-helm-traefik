@@ -11,7 +11,8 @@
 
 ## Description
 
-[Terraform](https://www.terraform.io/) module that allows you to deploy and configure [Træfik](https://traefik.io/traefik/).
+[Terraform](https://www.terraform.io/) module that allows you to deploy and configure [Træfik](https://traefik.io/traefik/)
+on [Kubernetes](https://kubernetes.io/) via [Helm](https://helm.sh/).
 
 ## Usage
 
