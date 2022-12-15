@@ -22,7 +22,7 @@
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_generic"></a> [generic](#module\_generic) | usine.solution-libre.fr/french-high-availability-multi-cloud-hosting/generic/helm | 0.2.0 |
+| <a name="module_generic"></a> [generic](#module\_generic) | usine.solution-libre.fr/french-high-availability-multi-cloud-hosting/generic/helm | 0.4.0 |
 
 ## Resources
 
@@ -37,10 +37,11 @@
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_helm_release"></a> [helm\_release](#input\_helm\_release) | Traefik Helm release customization | <pre>object({<br>    extra_values        = optional(string)<br>    chart               = optional(string, "traefik")<br>    chart_version       = optional(string, "17.0.5")<br>    name                = optional(string, "traefik")<br>    repository          = optional(string, "https://helm.traefik.io/traefik")<br>    timeout             = optional(number, 900)<br>    service_annotations = optional(string)<br>  })</pre> | <pre>{<br>  "chart": "traefik",<br>  "chart_version": "17.0.5",<br>  "name": "traefik",<br>  "repository": "https://helm.traefik.io/traefik",<br>  "timeout": 900<br>}</pre> | no |
+| <a name="input_helm_release"></a> [helm\_release](#input\_helm\_release) | Traefik Helm release customization | <pre>object({<br>    chart               = optional(string, "traefik")<br>    chart_version       = optional(string, "17.0.5")<br>    extra_values        = optional(list(string), [])<br>    name                = optional(string, "traefik")<br>    repository          = optional(string, "https://helm.traefik.io/traefik")<br>    timeout             = optional(number, 900)<br>    service_annotations = optional(string)<br>  })</pre> | `{}` | no |
 | <a name="input_ingress"></a> [ingress](#input\_ingress) | Map of ingress | <pre>map(object({<br>    hostname     = string<br>    namespace    = string<br>    service_name = string<br>    service_port = number<br>    www_redirect = optional(bool, false)<br>  }))</pre> | `{}` | no |
 | <a name="input_namespace"></a> [namespace](#input\_namespace) | Traefik namespace customization | <pre>object({<br>    create = optional(bool, true)<br>    name   = optional(string, "traefik")<br>  })</pre> | <pre>{<br>  "create": true,<br>  "name": "traefik"<br>}</pre> | no |
 | <a name="input_network_policies"></a> [network\_policies](#input\_network\_policies) | Traefik network policies customization | <pre>object({<br>    allow_ingress_enabled    = optional(bool, true)<br>    allow_monitoring_enabled = optional(bool, false)<br>    allow_namespace_enabled  = optional(bool, true)<br>    default_deny_enabled     = optional(bool, true)<br>    ingress_cidrs            = optional(list(string), ["0.0.0.0/0"])<br>  })</pre> | <pre>{<br>  "allow_ingress_enabled": true,<br>  "allow_monitoring_enabled": false,<br>  "allow_namespace_enabled": true,<br>  "default_deny_enabled": true,<br>  "ingress_cidrs": [<br>    "0.0.0.0/0"<br>  ]<br>}</pre> | no |
+| <a name="input_security_headers"></a> [security\_headers](#input\_security\_headers) | Traefik security headers customization | <pre>object({<br>    frame_deny           = optional(bool, false)<br>    browser_xss_filter   = optional(bool, true)<br>    content_type_nosniff = optional(bool, true)<br>    sts = optional(object({<br>      include_subdomains = optional(bool, true)<br>      seconds            = optional(number, 315360000)<br>      preload            = optional(bool, true)<br>    }), {})<br>  })</pre> | `{}` | no |
 
 ## Outputs
 

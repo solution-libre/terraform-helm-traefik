@@ -1,6 +1,6 @@
 module "generic" {
   source  = "usine.solution-libre.fr/french-high-availability-multi-cloud-hosting/generic/helm"
-  version = "0.2.0"
+  version = "0.4.0"
 
   helm_release     = var.helm_release
   namespace        = var.namespace
@@ -86,8 +86,9 @@ resource "kubernetes_manifest" "middleware" {
   manifest = yamldecode(templatefile(
     "${path.module}/templates/manifests/middleware.yaml.tpl",
     {
-      name      = var.helm_release.name
-      namespace = module.generic.namespace
+      name             = var.helm_release.name
+      namespace        = module.generic.namespace
+      security_headers = var.security_headers
     }
   ))
 }

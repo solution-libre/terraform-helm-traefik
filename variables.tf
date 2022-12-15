@@ -1,16 +1,10 @@
 variable "helm_release" {
-  default = {
-    chart         = "traefik"
-    chart_version = "17.0.5"
-    name          = "traefik"
-    repository    = "https://helm.traefik.io/traefik"
-    timeout       = 900
-  }
+  default     = {}
   description = "Traefik Helm release customization"
   type = object({
-    extra_values        = optional(string)
     chart               = optional(string, "traefik")
     chart_version       = optional(string, "17.0.5")
+    extra_values        = optional(list(string), [])
     name                = optional(string, "traefik")
     repository          = optional(string, "https://helm.traefik.io/traefik")
     timeout             = optional(number, 900)
@@ -57,5 +51,20 @@ variable "network_policies" {
     allow_namespace_enabled  = optional(bool, true)
     default_deny_enabled     = optional(bool, true)
     ingress_cidrs            = optional(list(string), ["0.0.0.0/0"])
+  })
+}
+
+variable "security_headers" {
+  default     = {}
+  description = "Traefik security headers customization"
+  type = object({
+    frame_deny           = optional(bool, false)
+    browser_xss_filter   = optional(bool, true)
+    content_type_nosniff = optional(bool, true)
+    sts = optional(object({
+      include_subdomains = optional(bool, true)
+      seconds            = optional(number, 315360000)
+      preload            = optional(bool, true)
+    }), {})
   })
 }
