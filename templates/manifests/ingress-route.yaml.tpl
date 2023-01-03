@@ -9,9 +9,16 @@ spec:
   routes:
     - match: Host(`${hostname}`)%{ if www_redirect } || Host(`www.${hostname}`)%{ endif }
       kind: Rule
-%{ if www_redirect }
+%{ if www_redirect || length(middlewares) > 0 }
       middlewares:
+%{ endif }
+%{ if www_redirect }
         - name: www-redirectregex
+%{ endif }
+%{ if length(middlewares) > 0 }
+%{ for middleware in middlewares }
+        - name: ${middleware}
+%{ endfor }
 %{ endif }
       services:
         - name: ${service_name}

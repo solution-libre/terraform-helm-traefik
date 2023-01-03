@@ -18,6 +18,7 @@ variable "ingress" {
   type = map(object({
     hostname     = string
     namespace    = string
+    middlewares  = optional(list(string), [])
     service_name = string
     service_port = number
     www_redirect = optional(bool, false)
@@ -25,10 +26,7 @@ variable "ingress" {
 }
 
 variable "namespace" {
-  default = {
-    create = true
-    name   = "traefik"
-  }
+  default     = {}
   description = "Traefik namespace customization"
   type = object({
     create = optional(bool, true)
@@ -37,13 +35,7 @@ variable "namespace" {
 }
 
 variable "network_policies" {
-  default = {
-    allow_ingress_enabled    = true
-    allow_monitoring_enabled = false
-    allow_namespace_enabled  = true
-    default_deny_enabled     = true
-    ingress_cidrs            = ["0.0.0.0/0"]
-  }
+  default     = {}
   description = "Traefik network policies customization"
   type = object({
     allow_ingress_enabled    = optional(bool, true)

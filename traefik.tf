@@ -1,6 +1,6 @@
 module "generic" {
-  source  = "usine.solution-libre.fr/french-high-availability-multi-cloud-hosting/generic/helm"
-  version = "0.4.0"
+  source  = "solution-libre/generic/helm"
+  version = "0.4.1"
 
   helm_release     = var.helm_release
   namespace        = var.namespace
@@ -70,6 +70,7 @@ resource "kubernetes_manifest" "ingress_route" {
     {
       name         = each.key
       namespace    = each.value.namespace
+      middlewares  = each.value.middlewares
       hostname     = each.value.hostname
       service_name = each.value.service_name
       service_port = each.value.service_port
@@ -82,9 +83,9 @@ resource "kubernetes_manifest" "ingress_route" {
   ]
 }
 
-resource "kubernetes_manifest" "middleware" {
+resource "kubernetes_manifest" "default_middleware" {
   manifest = yamldecode(templatefile(
-    "${path.module}/templates/manifests/middleware.yaml.tpl",
+    "${path.module}/templates/manifests/default-middleware.yaml.tpl",
     {
       name             = var.helm_release.name
       namespace        = module.generic.namespace

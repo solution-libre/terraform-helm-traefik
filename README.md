@@ -18,7 +18,7 @@ on [Kubernetes](https://kubernetes.io/) via [Helm](https://helm.sh/).
 
 ```terraform
 module "traefik" {
-  source  = "usine.solution-libre.fr/french-high-availability-multi-cloud-hosting/traefik/helm"
+  source  = "solution-libre/traefik/helm"
 
   ingress = {
     website = {
