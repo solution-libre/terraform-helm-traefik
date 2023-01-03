@@ -16,6 +16,16 @@ variable "ingress" {
   default     = {}
   description = "Map of ingress"
   type = map(object({
+    access_control = optional(object({
+      allow = optional(object({
+        credentials = optional(bool, false)
+        methods     = optional(list(string))
+        origin_list = optional(list(string))
+        }
+      ), {})
+      enabled = optional(bool, false)
+      max_age = optional(number)
+    }), {})
     hostname     = string
     namespace    = string
     middlewares  = optional(list(string), [])

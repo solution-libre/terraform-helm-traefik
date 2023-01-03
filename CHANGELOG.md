@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Output `namespace`
 - Output `app_version`
 - Possibility to use user defined middlewares
+- Add CORS middlewares
 
 ### Changed
 

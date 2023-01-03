@@ -68,13 +68,34 @@ resource "kubernetes_manifest" "ingress_route" {
   manifest = yamldecode(templatefile(
     "${path.module}/templates/manifests/ingress-route.yaml.tpl",
     {
-      name         = each.key
-      namespace    = each.value.namespace
-      middlewares  = each.value.middlewares
-      hostname     = each.value.hostname
-      service_name = each.value.service_name
-      service_port = each.value.service_port
-      www_redirect = each.value.www_redirect
+      access_control_enabled = each.value.access_control.enabled
+      name                   = each.key
+      namespace              = each.value.namespace
+      middlewares            = each.value.middlewares
+      hostname               = each.value.hostname
+      service_name           = each.value.service_name
+      service_port           = each.value.service_port
+      www_redirect           = each.value.www_redirect
+    }
+  ))
+
+  depends_on = [
+    module.generic
+  ]
+}
+
+resource "kubernetes_manifest" "cors_middleware" {
+  for_each = {
+    for key, value in var.ingress :
+    key => value if value.access_control.enabled
+  }
+
+  manifest = yamldecode(templatefile(
+    "${path.module}/templates/manifests/cors-middleware.yaml.tpl",
+    {
+      access_control = each.value.access_control
+      name           = each.key
+      namespace      = each.value.namespace
     }
   ))
 

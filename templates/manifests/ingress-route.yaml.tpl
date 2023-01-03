@@ -9,8 +9,11 @@ spec:
   routes:
     - match: Host(`${hostname}`)%{ if www_redirect } || Host(`www.${hostname}`)%{ endif }
       kind: Rule
-%{ if www_redirect || length(middlewares) > 0 }
+%{ if www_redirect || access_control_enabled || length(middlewares) > 0 }
       middlewares:
+%{ endif }
+%{ if access_control_enabled }
+        - name: ${name}-cors
 %{ endif }
 %{ if www_redirect }
         - name: www-redirectregex
