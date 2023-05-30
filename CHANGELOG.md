@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- markdownlint-configure-file { "MD024": { "allow_different_nesting": true } } -->
 
+## [0.7.0] 2023-05-30
+
+### Added
+
+- An input variables `deployment` to configure Deployment or DaemonSet and the number of replicas
+- An input variable `lb_ip` to add the IP address of the kubernetes provider's LoadBalancer to the list of trusted IPs
+
+### Changed
+
+- Refacto
+- Use whitespace stripping in template
+- Dedicated input variables `service` instead of part of `helm_release`
+- Rename `app_version` output variable to `version`
+
 ## [0.6.0] 2023-01-19
 
 ### Added
@@ -102,6 +116,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Terraform module creation
 
+[0.7.0]: https://usine.solution-libre.fr/french-high-availability-multi-cloud-hosting/terraform-modules/traefik/-/compare/v0.6.0...v0.7.0
 [0.6.0]: https://usine.solution-libre.fr/french-high-availability-multi-cloud-hosting/terraform-modules/traefik/-/compare/v0.5.0...v0.6.0
 [0.5.0]: https://usine.solution-libre.fr/french-high-availability-multi-cloud-hosting/terraform-modules/traefik/-/compare/v0.4.2...v0.5.0
 [0.4.2]: https://usine.solution-libre.fr/french-high-availability-multi-cloud-hosting/terraform-modules/traefik/-/compare/v0.4.1...v0.4.2

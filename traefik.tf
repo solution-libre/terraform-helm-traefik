@@ -9,9 +9,11 @@ module "generic" {
   values = templatefile(
     "${path.module}/templates/values.yaml.tpl",
     {
-      name                = var.helm_release.name
-      namespace           = var.namespace.name
-      service_annotations = var.helm_release.service_annotations
+      deployment = var.deployment
+      lb_ip      = var.lb_ip
+      name       = var.helm_release.name
+      namespace  = var.namespace.name
+      service    = var.service
     }
   )
 }
