@@ -1,19 +1,19 @@
-# To contribute improvements to CI/CD templates, please follow the Development guide at:
-# https://docs.gitlab.com/ee/development/cicd/templates.html
-# This specific template is located at:
-# https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Terraform.latest.gitlab-ci.yml
-
 include:
-  - template: Terraform/Base.latest.gitlab-ci.yml  # https://gitlab.com/gitlab-org/gitlab/blob/master/lib/gitlab/ci/templates/Terraform/Base.latest.gitlab-ci.yml
-  - template: Jobs/SAST-IaC.latest.gitlab-ci.yml   # https://gitlab.com/gitlab-org/gitlab/blob/master/lib/gitlab/ci/templates/Jobs/SAST-IaC.latest.gitlab-ci.yml
-
-image:
-  name: "$CI_TEMPLATE_REGISTRY_HOST/gitlab-org/terraform-images/releases/1.3:latest"
+  - template: Terraform/Base.latest.gitlab-ci.yml   # https://gitlab.com/gitlab-org/gitlab/blob/master/lib/gitlab/ci/templates/Terraform/Base.latest.gitlab-ci.yml
+  - template: Terraform/Module-Base.gitlab-ci.yml   # https://gitlab.com/gitlab-org/gitlab/blob/master/lib/gitlab/ci/templates/Terraform/Module-Base.gitlab-ci.yml
+  # - template: Jobs/Code-Quality.gitlab-ci.yml       # https://gitlab.com/gitlab-org/gitlab/blob/master/lib/gitlab/ci/templates/Jobs/Code-Quality.gitlab-ci.yml
+  - template: Jobs/Code-Intelligence.gitlab-ci.yml  # https://gitlab.com/gitlab-org/gitlab/blob/master/lib/gitlab/ci/templates/Jobs/Code-Intelligence.gitlab-ci.yml
+  - template: Jobs/SAST-IaC.latest.gitlab-ci.yml    # https://gitlab.com/gitlab-org/gitlab/blob/master/lib/gitlab/ci/templates/Jobs/SAST-IaC.latest.gitlab-ci.yml
+  - template: Jobs/Secret-Detection.gitlab-ci.yml   # https://gitlab.com/gitlab-org/gitlab/blob/master/lib/gitlab/ci/templates/Jobs/Secret-Detection.gitlab-ci.yml
 
 stages:
   - validate
   - test
   - upload
+  - release
+
+variables:
+  TERRAFORM_MODULE_SYSTEM: helm
 
 fmt:
   extends: .terraform:fmt
@@ -29,6 +29,7 @@ markdownlint:
     name: registry.gitlab.com/06kellyjac/docker_markdownlint-cli:latest
     entrypoint:
       - '/usr/bin/env'
+  cache: []
   before_script:
     - markdownlint --version
   script:
@@ -38,20 +39,57 @@ markdownlint:
       - '**/*.md'
   needs: []
 
-upload:
-  stage: upload
-  image: curlimages/curl:latest
-  variables:
-    TERRAFORM_MODULE_DIR: ${CI_PROJECT_DIR}
-    TERRAFORM_MODULE_SYSTEM: helm
-    TERRAFORM_MODULE_NAME: ${CI_PROJECT_NAME}
-    TERRAFORM_MODULE_VERSION: ${CI_COMMIT_TAG}
+# code_quality:
+#   artifacts:
+#     paths:
+#       - gl-code-quality-report.json
+
+kics-iac-sast:
+  artifacts:
+    paths:
+      - gl-sast-report.json
+
+changelog:
+  stage: test
+  image: docker
+  artifacts:
+    paths:
+      - release-note.md
+  cache: []
+  before_script:
+    - docker run --rm sean0x42/markdown-extract:v2 --version
   script:
-    - TERRAFORM_MODULE_NAME=$(echo "${TERRAFORM_MODULE_NAME}" | tr " _" -)
-    - TERRAFORM_MODULE_VERSION=$(echo "${TERRAFORM_MODULE_VERSION}" | sed -e 's/^v//')
-    - tar -vczf ${TERRAFORM_MODULE_NAME}-${TERRAFORM_MODULE_SYSTEM}-${TERRAFORM_MODULE_VERSION}.tgz -C ${TERRAFORM_MODULE_DIR} --exclude=./.git .
-    - 'curl --location --header "JOB-TOKEN: ${CI_JOB_TOKEN}" 
-         --upload-file ${TERRAFORM_MODULE_NAME}-${TERRAFORM_MODULE_SYSTEM}-${TERRAFORM_MODULE_VERSION}.tgz
-         ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/terraform/modules/${TERRAFORM_MODULE_NAME}/${TERRAFORM_MODULE_SYSTEM}/${TERRAFORM_MODULE_VERSION}/file'
+    - docker run -v $PWD:/opt sean0x42/markdown-extract:v2 -n "$(echo "$CI_COMMIT_TAG" | sed -e 's/^v//')" /opt/CHANGELOG.md > release-note.md
   rules:
     - if: $CI_COMMIT_TAG
+
+upload:
+  extends: .terraform-module:deploy
+  stage: upload
+  cache: []
+  before_script:
+    - TERRAFORM_MODULE_VERSION=$(echo "${TERRAFORM_MODULE_VERSION}" | sed -e 's/^v//')
+  rules:
+    - if: $CI_COMMIT_TAG
+
+release:
+  stage: release
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  cache: []
+  needs:
+    - changelog
+    - upload
+  rules:
+    - if: $CI_COMMIT_TAG
+  before_script:
+    - apk add curl jq --no-cache --update
+    - |
+      PACKAGE_WEB_PATH=$(curl --fail-with-body --location --header "JOB-TOKEN: ${CI_JOB_TOKEN}" "${PACKAGE_API_URL}" | jq -r .[0]._links.web_path)
+    - PACKAGE_WEB_URL="${CI_SERVER_URL}${PACKAGE_WEB_PATH}"
+  script:
+    - |
+      release-cli create --name "$CI_COMMIT_TAG" --tag-name $CI_COMMIT_TAG \
+        --description release-note.md \
+        --assets-link "{\"name\":\"Terraform module\",\"url\":\"${PACKAGE_WEB_URL}\",\"link_type\":\"package\"}"
+  variables:
+    PACKAGE_API_URL: ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages?package_type=terraform_module&package_name=${TERRAFORM_MODULE_NAME}/${TERRAFORM_MODULE_SYSTEM}&sort=desc&per_page=1
