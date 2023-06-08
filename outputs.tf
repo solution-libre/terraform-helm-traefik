@@ -3,7 +3,7 @@ output "namespace" {
   value       = module.generic.namespace
 }
 
-output "app_version" {
+output "version" {
   description = "Traefik version"
   value       = module.generic.app_version
 }

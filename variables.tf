@@ -1,14 +1,23 @@
+variable "deployment" {
+  default     = {}
+  description = "Traefik deployment configuration"
+  type = object({
+    enabled  = optional(bool, true)
+    kind     = optional(string, "Deployment")
+    replicas = optional(number, 1)
+  })
+}
+
 variable "helm_release" {
   default     = {}
-  description = "Traefik Helm release customization"
+  description = "Traefik Helm release configuration"
   type = object({
-    chart               = optional(string, "traefik")
-    chart_version       = optional(string, "17.0.5")
-    extra_values        = optional(list(string), [])
-    name                = optional(string, "traefik")
-    repository          = optional(string, "https://helm.traefik.io/traefik")
-    timeout             = optional(number, 900)
-    service_annotations = optional(string)
+    chart         = optional(string, "traefik")
+    chart_version = optional(string, "17.0.5")
+    extra_values  = optional(list(string), [])
+    name          = optional(string, "traefik")
+    repository    = optional(string, "https://helm.traefik.io/traefik")
+    timeout       = optional(number, 900)
   })
 }
 
@@ -25,9 +34,15 @@ variable "ingress" {
   }))
 }
 
+variable "lb_ip" {
+  default     = ""
+  description = "The IP address of the kubernetes provider's LoadBalancer"
+  type        = string
+}
+
 variable "namespace" {
   default     = {}
-  description = "Traefik namespace customization"
+  description = "Traefik namespace configuration"
   type = object({
     create = optional(bool, true)
     name   = optional(string, "traefik")
@@ -36,7 +51,7 @@ variable "namespace" {
 
 variable "network_policies" {
   default     = {}
-  description = "Traefik network policies customization"
+  description = "Traefik network policies configuration"
   type = object({
     allow_ingress_enabled    = optional(bool, true)
     allow_monitoring_enabled = optional(bool, false)
@@ -48,7 +63,7 @@ variable "network_policies" {
 
 variable "security_headers" {
   default     = {}
-  description = "Traefik security headers customization"
+  description = "Traefik security headers configuration"
   type = object({
     frame_deny           = optional(bool, false)
     browser_xss_filter   = optional(bool, true)
@@ -58,5 +73,14 @@ variable "security_headers" {
       seconds            = optional(number, 315360000)
       preload            = optional(bool, true)
     }), {})
+  })
+}
+
+variable "service" {
+  default     = {}
+  description = "Traefik service configuration"
+  type = object({
+    annotations      = optional(string)
+    ip_family_policy = optional(string)
   })
 }
