@@ -1,0 +1,33 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Format all Terraform configuration files",
+            "type": "shell",
+            "command": "terraform fmt --recursive",
+            "presentation": {
+                "reveal": "silent",
+                "panel": "new"
+            },
+            "problemMatcher": [],
+        },
+        {
+            "label": "Generate Terraform documentation",
+            "type": "shell",
+            "command": "terraform-docs markdown .",
+            "presentation": {
+                "reveal": "silent",
+                "panel": "new"
+            },
+            "problemMatcher": [],
+        },
+        {
+            "label": "Format TF config and generate TF documentation",
+            "dependsOn": [
+                "Format all Terraform configuration files",
+                "Generate Terraform documentation"
+            ],
+            "problemMatcher": [],
+        }
+    ]
+}
