@@ -76,24 +76,13 @@ resource "kubernetes_manifest" "ingress_route" {
       hostname     = each.value.hostname
       service_name = each.value.service_name
       service_port = each.value.service_port
-      www_redirect = each.value.www_redirect
+      redirect     = each.value.redirect
     }
   ))
 
   depends_on = [
     module.generic
   ]
-}
-
-resource "kubernetes_manifest" "default_middleware" {
-  manifest = yamldecode(templatefile(
-    "${path.module}/templates/manifests/default-middleware.yaml.tpl",
-    {
-      name             = var.helm_release.name
-      namespace        = module.generic.namespace
-      security_headers = var.security_headers
-    }
-  ))
 }
 
 resource "kubernetes_manifest" "tls_options" {

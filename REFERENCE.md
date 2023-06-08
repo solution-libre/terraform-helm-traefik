@@ -29,6 +29,8 @@
 | Name | Type |
 |------|------|
 | [kubernetes_manifest.default_middleware](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
+| [kubernetes_manifest.from_non_www_to_www_redirects_middleware](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
+| [kubernetes_manifest.from_www_to_non_www_redirects_middleware](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_manifest.ingress_route](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_manifest.tls_options](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_network_policy.traefik_allow_ingress](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/network_policy) | resource |
@@ -39,12 +41,12 @@
 |------|-------------|------|---------|:--------:|
 | <a name="input_deployment"></a> [deployment](#input\_deployment) | Traefik deployment configuration | <pre>object({<br>    enabled  = optional(bool, true)<br>    kind     = optional(string, "Deployment")<br>    replicas = optional(number, 1)<br>  })</pre> | `{}` | no |
 | <a name="input_helm_release"></a> [helm\_release](#input\_helm\_release) | Traefik Helm release configuration | <pre>object({<br>    chart         = optional(string, "traefik")<br>    chart_version = optional(string, "17.0.5")<br>    extra_values  = optional(list(string), [])<br>    name          = optional(string, "traefik")<br>    repository    = optional(string, "https://helm.traefik.io/traefik")<br>    timeout       = optional(number, 900)<br>  })</pre> | `{}` | no |
-| <a name="input_ingress"></a> [ingress](#input\_ingress) | Map of ingress | <pre>map(object({<br>    hostname     = string<br>    namespace    = string<br>    middlewares  = optional(list(string), [])<br>    service_name = string<br>    service_port = number<br>    www_redirect = optional(bool, false)<br>  }))</pre> | `{}` | no |
+| <a name="input_ingress"></a> [ingress](#input\_ingress) | Map of ingress | <pre>map(object({<br>    hostname    = string<br>    namespace   = string<br>    middlewares = optional(list(string), [])<br>    redirect = optional(object({<br>      from_non_www_to_www = optional(bool, false)<br>      from_www_to_non_www = optional(bool, false)<br>    }), {})<br>    service_name = string<br>    service_port = number<br>  }))</pre> | `{}` | no |
 | <a name="input_lb_ip"></a> [lb\_ip](#input\_lb\_ip) | The IP address of the kubernetes provider's LoadBalancer | `string` | `""` | no |
 | <a name="input_namespace"></a> [namespace](#input\_namespace) | Traefik namespace configuration | <pre>object({<br>    create = optional(bool, true)<br>    name   = optional(string, "traefik")<br>  })</pre> | `{}` | no |
 | <a name="input_network_policies"></a> [network\_policies](#input\_network\_policies) | Traefik network policies configuration | <pre>object({<br>    allow_ingress_enabled    = optional(bool, true)<br>    allow_monitoring_enabled = optional(bool, false)<br>    allow_namespace_enabled  = optional(bool, true)<br>    default_deny_enabled     = optional(bool, true)<br>    ingress_cidrs            = optional(list(string), ["0.0.0.0/0"])<br>  })</pre> | `{}` | no |
 | <a name="input_security_headers"></a> [security\_headers](#input\_security\_headers) | Traefik security headers configuration | <pre>object({<br>    frame_deny           = optional(bool, false)<br>    browser_xss_filter   = optional(bool, true)<br>    content_type_nosniff = optional(bool, true)<br>    sts = optional(object({<br>      include_subdomains = optional(bool, true)<br>      seconds            = optional(number, 315360000)<br>      preload            = optional(bool, true)<br>    }), {})<br>  })</pre> | `{}` | no |
-| <a name="input_service"></a> [service](#input\_service) | Traefik service configuration | <pre>object({<br>    annotations      = optional(string)<br>    ip_family_policy = optional(string)<br>  })</pre> | `{}` | no |
+| <a name="input_service"></a> [service](#input\_service) | Traefik service configuration | <pre>object({<br>    annotations      = optional(map(string), {})<br>    ip_family_policy = optional(string)<br>  })</pre> | `{}` | no |
 
 ## Outputs
 
