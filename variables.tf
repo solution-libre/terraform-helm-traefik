@@ -35,13 +35,21 @@ variable "ingress" {
       enabled = optional(bool, false)
       max_age = optional(number)
     }), {})
-    hostname     = string
-    namespace    = string
-    middlewares  = optional(list(string), [])
+    hostname    = string
+    namespace   = string
+    middlewares = optional(list(string), [])
+    redirect = optional(object({
+      from_non_www_to_www = optional(bool, false)
+      from_www_to_non_www = optional(bool, false)
+    }), {})
     service_name = string
     service_port = number
-    www_redirect = optional(bool, false)
   }))
+
+  validation {
+    condition     = (lookup(var.ingress, "redirect", null) == null) ? true : !alltrue([var.ingress.redirect.from_non_www_to_www, var.ingress.redirect.from_www_to_non_www])
+    error_message = "Both `from_non_www_to_www` and `from_www_to_non_www` are set to true (but are exclusive)."
+  }
 }
 
 variable "lb_ip" {
@@ -90,7 +98,7 @@ variable "service" {
   default     = {}
   description = "Traefik service configuration"
   type = object({
-    annotations      = optional(string)
+    annotations      = optional(map(string), {})
     ip_family_policy = optional(string)
   })
 }

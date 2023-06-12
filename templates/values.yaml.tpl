@@ -22,10 +22,15 @@ ports:
       trustedIPs: ${jsonencode(compact(["127.0.0.1/32", "10.0.0.0/8", "100.64.0.0/10", lb_ip]))}
     tls:
       options: ${namespace}-${name}-default@kubernetescrd
+%{ if length(service.annotations) > 0 || service.ip_family_policy != null ~}
 service:
-%{ if service.annotations != null ~}
-  annotations: ${indent(4, service.annotations)}
+%{ if length(service.annotations) > 0 ~}
+  annotations:
+%{ for key, value in service.annotations ~}
+    ${key}: ${value}
+%{ endfor ~}
 %{ endif ~}
 %{ if service.ip_family_policy != null ~}
   ipFamilyPolicy: ${service.ip_family_policy}
+%{ endif ~}
 %{ endif ~}

@@ -7,37 +7,25 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`${hostname}`)%{ if www_redirect } || Host(`www.${hostname}`)%{ endif }
+    - match: Host(`${hostname}`)%{ if anytrue(values(redirect)) } || Host(`www.${hostname}`)%{ endif }
       kind: Rule
-%{ if www_redirect || access_control_enabled || length(middlewares) > 0 }
+%{ if anytrue(values(redirect)) || access_control_enabled || length(middlewares) > 0 ~}
       middlewares:
-%{ endif }
+%{ endif ~}
 %{ if access_control_enabled }
         - name: ${name}-cors
 %{ endif }
-%{ if www_redirect }
-        - name: www-redirectregex
-%{ endif }
-%{ if length(middlewares) > 0 }
-%{ for middleware in middlewares }
+%{ if redirect.from_non_www_to_www ~}
+        - name: from-non-www-to-www-redirect
+%{ endif ~}
+%{ if redirect.from_www_to_non_www ~}
+        - name: from-www-to-non-www-redirect
+%{ endif ~}
+%{ for middleware in middlewares ~}
         - name: ${middleware}
-%{ endfor }
-%{ endif }
+%{ endfor ~}
       services:
         - name: ${service_name}
           port: ${service_port}
   tls:
     secretName: ${hostname}
-%{ if www_redirect }
----
-apiVersion: traefik.containo.us/v1alpha1
-kind: Middleware
-metadata:
-  name: www-redirectregex
-  namespace: ${namespace}
-spec:
-  redirectRegex:
-    permanent: true
-    regex: '^https?://www\.(.+)'
-    replacement: 'https://$1'
-%{ endif }
