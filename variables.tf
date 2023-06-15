@@ -21,9 +21,9 @@ variable "helm_release" {
   })
 }
 
-variable "ingress" {
+variable "ingress_routes" {
   default     = {}
-  description = "Map of ingress"
+  description = "Map of ingress routes"
   type = map(object({
     hostname    = string
     namespace   = string
@@ -37,9 +37,26 @@ variable "ingress" {
   }))
 
   validation {
-    condition     = (lookup(var.ingress, "redirect", null) == null) ? true : !alltrue([var.ingress.redirect.from_non_www_to_www, var.ingress.redirect.from_www_to_non_www])
+    condition     = (lookup(var.ingress_routes, "redirect", null) == null) ? true : !alltrue([var.ingress_routes.redirect.from_non_www_to_www, var.ingress_routes.redirect.from_www_to_non_www])
     error_message = "Both `from_non_www_to_www` and `from_www_to_non_www` are set to true (but are exclusive)."
   }
+}
+
+variable "ingress_routes_tcp" {
+  default     = {}
+  description = "Map of ingress routes TCP"
+  type = map(object({
+    entry_point = string
+    namespace   = string
+    proxy_protocol = optional(object({
+      enabled = optional(bool, false)
+      version = optional(number, 2)
+    }))
+    service = object({
+      name = string
+      port = number
+    })
+  }))
 }
 
 variable "lb_ip" {
