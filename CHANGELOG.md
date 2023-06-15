@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- markdownlint-configure-file { "MD024": { "allow_different_nesting": true } } -->
 
+## [0.9.0] 2023-06-15
+
+### Added
+
+- IngressRouteTCP
+
+### Changed
+
+- Rename input variable `ingress` to `ingress_routes`
+
 ## [0.8.1] 2023-06-08
 
 ### Fixed
@@ -137,6 +147,7 @@ attribute `from_non_www_to_www` and `from_www_to_non_www`
 
 - Terraform module creation
 
+[0.9.0]: https://usine.solution-libre.fr/french-high-availability-multi-cloud-hosting/terraform-modules/traefik/-/compare/v0.8.1...v0.9.0
 [0.8.1]: https://usine.solution-libre.fr/french-high-availability-multi-cloud-hosting/terraform-modules/traefik/-/compare/v0.8.0...v0.8.1
 [0.8.0]: https://usine.solution-libre.fr/french-high-availability-multi-cloud-hosting/terraform-modules/traefik/-/compare/v0.7.0...v0.8.0
 [0.7.0]: https://usine.solution-libre.fr/french-high-availability-multi-cloud-hosting/terraform-modules/traefik/-/compare/v0.6.0...v0.7.0

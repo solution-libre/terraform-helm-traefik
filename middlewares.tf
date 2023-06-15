@@ -14,10 +14,10 @@ resource "kubernetes_manifest" "default_middleware" {
 }
 
 locals {
-  from_non_www_to_www_redirects = { for value in var.ingress :
+  from_non_www_to_www_redirects = { for value in var.ingress_routes :
     value.namespace => value.redirect.from_non_www_to_www...
   }
-  from_www_to_non_www_redirects = { for value in var.ingress :
+  from_www_to_non_www_redirects = { for value in var.ingress_routes :
     value.namespace => value.redirect.from_www_to_non_www...
   }
 }
