@@ -4,13 +4,12 @@ resource "kubernetes_manifest" "ingress_routes" {
   manifest = yamldecode(templatefile(
     "${path.module}/templates/manifests/ingress-route.yaml.tpl",
     {
-      name         = each.key
-      namespace    = each.value.namespace
-      middlewares  = each.value.middlewares
-      hostname     = each.value.hostname
-      service_name = each.value.service_name
-      service_port = each.value.service_port
-      redirect     = each.value.redirect
+      name        = each.key
+      namespace   = each.value.namespace
+      middlewares = each.value.middlewares
+      hostname    = each.value.hostname
+      service     = each.value.service
+      redirect    = each.value.redirect
     }
   ))
 
