@@ -9,6 +9,7 @@ resource "kubernetes_manifest" "ingress_routes_tcp" {
       namespace      = each.value.namespace
       proxy_protocol = each.value.proxy_protocol
       service        = each.value.service
+      tls            = each.value.tls
     }
   ))
 

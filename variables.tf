@@ -56,6 +56,10 @@ variable "ingress_routes_tcp" {
       name = string
       port = number
     })
+    tls = optional(object({
+      enabled     = optional(bool, false)
+      secret_name = string
+    }))
   }))
 }
 

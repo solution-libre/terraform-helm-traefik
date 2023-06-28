@@ -15,3 +15,7 @@ spec:
       proxyProtocol:
         version: ${proxy_protocol.version}
 %{ endif ~}
+%{ if try(tls.enabled, false) ~}
+  tls:
+    secretName: ${tls.secret_name}
+%{ endif ~}
