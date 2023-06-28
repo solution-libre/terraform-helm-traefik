@@ -22,7 +22,12 @@ spec:
         - name: ${middleware}
 %{ endfor ~}
       services:
-        - name: ${service_name}
-          port: ${service_port}
+        - name: ${service.name}
+          port: ${service.port}
+%{ if service.sticky ~}
+          sticky:
+            cookie:
+              name: lb_${service.name}
+%{ endif ~}
   tls:
     secretName: ${hostname}

@@ -32,8 +32,11 @@ variable "ingress_routes" {
       from_non_www_to_www = optional(bool, false)
       from_www_to_non_www = optional(bool, false)
     }), {})
-    service_name = string
-    service_port = number
+    service = object({
+      name   = string
+      port   = number
+      sticky = optional(bool, false)
+    })
   }))
 
   validation {
