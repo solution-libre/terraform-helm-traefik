@@ -49,8 +49,11 @@ variable "ingress_routes_tcp" {
   default     = {}
   description = "Map of ingress routes TCP"
   type = map(object({
-    entry_point = string
-    namespace   = string
+    entry_point = object({
+      name = string
+      port = number
+    })
+    namespace = string
     proxy_protocol = optional(object({
       enabled = optional(bool, false)
       version = optional(number, 2)

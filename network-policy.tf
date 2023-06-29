@@ -1,7 +1,7 @@
 locals {
   ingress_ports = concat(
     [8000, 8443],
-    [for value in var.ingress_routes_tcp : value.service.port]
+    [for value in var.ingress_routes_tcp : value.entry_point.port]
   )
 }
 
