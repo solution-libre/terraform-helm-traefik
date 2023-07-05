@@ -11,7 +11,7 @@ module "generic" {
     {
       deployment         = var.deployment
       ingress_routes_tcp = var.ingress_routes_tcp
-      lb_ip              = var.lb_ip
+      ports              = var.ports
       name               = var.helm_release.name
       namespace          = var.namespace.name
       service            = var.service
