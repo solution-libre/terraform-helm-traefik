@@ -35,6 +35,7 @@
 | [kubernetes_manifest.ingress_routes_tcp](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_manifest.tls_options](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_network_policy.traefik_allow_ingress](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/network_policy) | resource |
+| [kubernetes_secret.basic_auth](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/secret) | resource |
 
 ## Inputs
 
@@ -47,6 +48,7 @@
 | <a name="input_lb_ip"></a> [lb\_ip](#input\_lb\_ip) | The IP address of the kubernetes provider's LoadBalancer | `string` | `""` | no |
 | <a name="input_namespace"></a> [namespace](#input\_namespace) | Traefik namespace configuration | <pre>object({<br>    create = optional(bool, true)<br>    name   = optional(string, "traefik")<br>  })</pre> | `{}` | no |
 | <a name="input_network_policies"></a> [network\_policies](#input\_network\_policies) | Traefik network policies configuration | <pre>object({<br>    allow_ingress_enabled    = optional(bool, true)<br>    allow_monitoring_enabled = optional(bool, false)<br>    allow_namespace_enabled  = optional(bool, true)<br>    default_deny_enabled     = optional(bool, true)<br>    ingress_cidrs            = optional(list(string), ["0.0.0.0/0"])<br>  })</pre> | `{}` | no |
+| <a name="input_providers"></a> [providers](#input\_providers) | Traefik provides configuration | <pre>object({<br>    kubernetes_crd = optional(object({<br>      enabled                      = optional(bool, true)<br>      allow_cross_namespace        = optional(bool, false)<br>      allow_external_name_services = optional(bool, false)<br>      allow_empty_services         = optional(bool, false)<br>    })),<br>    kubernetes_ingress = optional(object({<br>      enabled                      = optional(bool, true)<br>      allow_external_name_services = optional(bool, false)<br>      allow_empty_services         = optional(bool, false)<br>    }))<br>  })</pre> | `{}` | no |
 | <a name="input_security_headers"></a> [security\_headers](#input\_security\_headers) | Traefik security headers configuration | <pre>object({<br>    frame_deny           = optional(bool, false)<br>    browser_xss_filter   = optional(bool, true)<br>    content_type_nosniff = optional(bool, true)<br>    sts = optional(object({<br>      include_subdomains = optional(bool, true)<br>      seconds            = optional(number, 315360000)<br>      preload            = optional(bool, true)<br>    }), {})<br>  })</pre> | `{}` | no |
 | <a name="input_service"></a> [service](#input\_service) | Traefik service configuration | <pre>object({<br>    annotations      = optional(map(string), {})<br>    ip_family_policy = optional(string)<br>  })</pre> | `{}` | no |
 
