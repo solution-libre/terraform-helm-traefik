@@ -5,7 +5,7 @@ metadata:
   namespace: ${namespace}
 spec:
   entryPoints:
-    - ${entry_point}
+    - ${entry_point.name}
   routes:
   - match: HostSNI(`*`)
     services:
