@@ -32,6 +32,22 @@ ports:
     exposedPort: ${value.entry_point.port}
     protocol: TCP
 %{ endfor ~}
+%{ if providers.kubernetes_crd != null || providers.kubernetes_ingress != null ~}
+providers:
+%{ if providers.kubernetes_crd != null ~}
+  kubernetesCRD:
+    enabled: ${providers.kubernetes_crd.enabled}
+    allowCrossNamespace: ${providers.kubernetes_crd.allow_cross_namespace}
+    allowExternalNameServices: ${providers.kubernetes_crd.allow_external_name_services}
+    allowEmptyServices: ${providers.kubernetes_crd.allow_empty_services}
+%{ endif ~}
+%{ if providers.kubernetes_ingress != null ~}
+  kubernetesIngress:
+    enabled: ${providers.kubernetes_ingress.enabled}
+    allowExternalNameServices: ${providers.kubernetes_ingress.allow_external_name_services}
+    allowEmptyServices: ${providers.kubernetes_ingress.allow_empty_services}
+%{ endif ~}
+%{ endif ~}
 %{ if length(service.annotations) > 0 || service.ip_family_policy != null ~}
 service:
 %{ if length(service.annotations) > 0 ~}

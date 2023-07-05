@@ -119,3 +119,22 @@ variable "service" {
     ip_family_policy = optional(string)
   })
 }
+
+variable "providers" {
+  default     = {}
+  description = "Traefik provides configuration"
+  type = object({
+    kubernetes_crd = optional(object({
+      enabled                      = optional(bool, true)
+      allow_cross_namespace        = optional(bool, false)
+      allow_external_name_services = optional(bool, false)
+      allow_empty_services         = optional(bool, false)
+    })),
+    kubernetes_ingress = optional(object({
+      enabled                      = optional(bool, true)
+      allow_external_name_services = optional(bool, false)
+      allow_empty_services         = optional(bool, false)
+    }))
+  })
+
+}

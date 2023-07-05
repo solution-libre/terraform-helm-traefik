@@ -15,6 +15,7 @@ module "generic" {
       name               = var.helm_release.name
       namespace          = var.namespace.name
       service            = var.service
+      providers          = var.providers
     }
   )
 }
