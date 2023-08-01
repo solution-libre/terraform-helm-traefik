@@ -2,9 +2,9 @@ variable "deployment" {
   default     = {}
   description = "Traefik deployment configuration"
   type = object({
-    enabled  = optional(bool, true)
-    kind     = optional(string, "Deployment")
-    replicas = optional(number, 1)
+    enabled  = optional(bool, true)           # Enable deployment
+    kind     = optional(string, "Deployment") # Deployment or DaemonSet
+    replicas = optional(number, 1)            # Number of pods of the deployment (only applies when kind == Deployment)
   })
 }
 
@@ -12,12 +12,12 @@ variable "helm_release" {
   default     = {}
   description = "Traefik Helm release configuration"
   type = object({
-    chart         = optional(string, "traefik")
-    chart_version = optional(string, "17.0.5")
-    extra_values  = optional(list(string), [])
-    name          = optional(string, "traefik")
-    repository    = optional(string, "https://helm.traefik.io/traefik")
-    timeout       = optional(number, 900)
+    chart         = optional(string, "traefik")                         # Chart name to be installed
+    chart_version = optional(string, "17.0.5")                          # Specify the exact chart version to install
+    extra_values  = optional(list(string), [])                          # List of extra values in raw yaml to pass to helm
+    name          = optional(string, "traefik")                         # Release name
+    repository    = optional(string, "https://helm.traefik.io/traefik") # Repository URL where to locate the requested chart
+    timeout       = optional(number, 900)                               # Time in seconds to wait for any individual kubernetes operation
   })
 }
 
@@ -69,18 +69,21 @@ variable "ingress_routes_tcp" {
   }))
 }
 
-variable "lb_ip" {
-  default     = ""
-  description = "The IP address of the kubernetes provider's LoadBalancer"
-  type        = string
+variable "ports" {
+  default     = {}
+  description = "Traefik ports configuration"
+  type = object({
+    lb_ip                     = optional(string, "") # The IP address of the kubernetes provider's LoadBalancer
+    http_to_https_redirection = optional(bool, true) # Permanent redirect from HTTP to HTTPs
+  })
 }
 
 variable "namespace" {
   default     = {}
   description = "Traefik namespace configuration"
   type = object({
-    create = optional(bool, true)
-    name   = optional(string, "traefik")
+    create = optional(bool, true)        # Create the namespace if it does not yet exist
+    name   = optional(string, "traefik") # The namespace to install the release into
   })
 }
 
@@ -115,8 +118,8 @@ variable "service" {
   default     = {}
   description = "Traefik service configuration"
   type = object({
-    annotations      = optional(map(string), {})
-    ip_family_policy = optional(string)
+    annotations      = optional(map(string), {}) # Additional annotations applied to both TCP and UDP services
+    ip_family_policy = optional(string)          # One of SingleStack, PreferDualStack, or RequireDualStack
   })
 }
 
