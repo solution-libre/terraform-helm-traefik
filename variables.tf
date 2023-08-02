@@ -122,3 +122,22 @@ variable "service" {
     ip_family_policy = optional(string)          # One of SingleStack, PreferDualStack, or RequireDualStack
   })
 }
+
+variable "kubernetes_providers" {
+  default     = {}
+  description = "Traefik provides configuration"
+  type = object({
+    crd = optional(object({
+      enabled                      = optional(bool, true)  # Load Kubernetes IngressRoute provider
+      allow_cross_namespace        = optional(bool, false) # Allows IngressRoute to reference resources in namespace other than theirs
+      allow_external_name_services = optional(bool, false) # Allows to reference ExternalName services in IngressRoute
+      allow_empty_services         = optional(bool, false) # Allows to return 503 when there is no endpoints available
+    })),
+    ingress = optional(object({
+      enabled                      = optional(bool, true)  # Load Kubernetes IngressRoute provider
+      allow_external_name_services = optional(bool, false) # Allows to reference ExternalName services in Ingress
+      allow_empty_services         = optional(bool, false) # Allows to return 503 when there is no endpoints available
+    }))
+  })
+
+}
