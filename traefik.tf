@@ -9,13 +9,13 @@ module "generic" {
   values = templatefile(
     "${path.module}/templates/values.yaml.tpl",
     {
-      deployment         = var.deployment
-      ingress_routes_tcp = var.ingress_routes_tcp
-      ports              = var.ports
-      name               = var.helm_release.name
-      namespace          = var.namespace.name
-      service            = var.service
-      providers          = var.providers
+      deployment           = var.deployment
+      ingress_routes_tcp   = var.ingress_routes_tcp
+      ports                = var.ports
+      name                 = var.helm_release.name
+      namespace            = var.namespace.name
+      service              = var.service
+      kubernetes_providers = var.kubernetes_providers
     }
   )
 }
