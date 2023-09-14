@@ -13,7 +13,7 @@ variable "helm_release" {
   description = "Traefik Helm release configuration"
   type = object({
     chart         = optional(string, "traefik")                         # Chart name to be installed
-    chart_version = optional(string, "17.0.5")                          # Specify the exact chart version to install
+    chart_version = optional(string, "20.8.0")                          # Specify the exact chart version to install
     extra_values  = optional(list(string), [])                          # List of extra values in raw yaml to pass to helm
     name          = optional(string, "traefik")                         # Release name
     repository    = optional(string, "https://helm.traefik.io/traefik") # Repository URL where to locate the requested chart
@@ -67,6 +67,38 @@ variable "ingress_routes_tcp" {
       secret_name = string
     }))
   }))
+}
+
+variable "logs" {
+  default     = {}
+  description = "Traefik logs configuration"
+  type = object({
+    general = optional(object({
+      level = optional(string, "ERROR") # Logging levels
+    }), {})
+  })
+
+  validation {
+    condition     = contains(["DEBUG", "PANIC", "FATAL", "ERROR", "WARN", "INFO"], var.logs.general.level)
+    error_message = "Logging levels are DEBUG, PANIC, FATAL, ERROR, WARN, and INFO."
+  }
+}
+
+variable "metrics" {
+  default     = {}
+  description = "Traefik metrics configuration"
+  type = object({
+    prometheus = optional(object({
+      enabled     = optional(bool, true)
+      entry_point = optional(string, "metrics") # Entry point used to expose metrics
+      service = optional(object({
+        enabled = optional(bool, false) # Create a dedicated metrics service for use with ServiceMonitor
+      }), {})
+      service_monitor = optional(object({
+        enabled = optional(bool, false)
+      }), {})
+    }), {})
+  })
 }
 
 variable "ports" {

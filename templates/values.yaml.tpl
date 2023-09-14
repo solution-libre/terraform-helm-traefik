@@ -10,9 +10,20 @@ deployment:
 ingressRoute:
   dashboard:
     enabled: false
-# logs:
-#   general:
-#     level: DEBUG
+logs:
+  general:
+    level: ${logs.general.level}
+metrics:
+  prometheus:
+%{ if metrics.prometheus.enabled ~}
+    entryPoint: ${metrics.prometheus.entry_point}
+    service:
+      enabled: ${metrics.prometheus.service.enabled}
+%{ if metrics.prometheus.service_monitor.enabled ~}
+    serviceMonitor:
+      enabled: ${metrics.prometheus.service_monitor.enabled}
+%{ endif ~}
+%{ endif ~}
 ports:
   web:
 %{ if ports.http_to_https_redirection ~}
