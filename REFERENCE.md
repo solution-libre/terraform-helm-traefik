@@ -22,7 +22,7 @@
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_generic"></a> [generic](#module\_generic) | solution-libre/generic/helm | 0.4.1 |
+| <a name="module_generic"></a> [generic](#module\_generic) | solution-libre/generic/helm | 0.5.0 |
 
 ## Resources
 

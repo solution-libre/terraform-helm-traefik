@@ -5,5 +5,5 @@ output "namespace" {
 
 output "version" {
   description = "Traefik version"
-  value       = module.generic.app_version
+  value       = module.generic.version
 }
