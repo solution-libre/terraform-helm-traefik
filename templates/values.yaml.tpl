@@ -21,7 +21,7 @@ metrics:
       enabled: ${metrics.prometheus.service.enabled}
 %{ if metrics.prometheus.service_monitor.enabled ~}
     serviceMonitor:
-      enabled: ${metrics.prometheus.service_monitor.enabled}
+      honorLabels: true
 %{ endif ~}
 %{ endif ~}
 ports:
