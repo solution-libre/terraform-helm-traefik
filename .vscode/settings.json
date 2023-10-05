@@ -1,3 +1,4 @@
 {
-    "licenser.projectName": "Traefik Terraform module"
+    "licenser.projectName": "Traefik Terraform module",
+    "licenser.license": "GPLv3"
 }

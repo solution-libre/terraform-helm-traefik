@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with Traefik Terraform module.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Traefik Terraform module.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 variable "deployment" {
@@ -44,9 +44,14 @@ variable "ingress_routes" {
   default     = {}
   description = "Map of ingress routes"
   type = map(object({
-    hostname    = string
+    match = object({
+      hosts         = list(string)
+      paths         = optional(list(string), [])
+      path_prefixes = optional(list(string), [])
+    })
     namespace   = string
     middlewares = optional(list(string), [])
+    priority    = optional(number)
     redirect = optional(object({
       from_non_www_to_www = optional(bool, false)
       from_www_to_non_www = optional(bool, false)
@@ -55,6 +60,9 @@ variable "ingress_routes" {
       name   = string
       port   = number
       sticky = optional(bool, false)
+    })
+    tls = object({
+      secret_name = string
     })
   }))
 

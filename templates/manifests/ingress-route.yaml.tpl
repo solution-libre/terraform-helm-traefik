@@ -7,8 +7,26 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`${hostname}`)%{ if anytrue(values(redirect)) } || Host(`www.${hostname}`)%{ endif }
-      kind: Rule
+    - kind: Rule
+      match: Host(${join(",", formatlist("`%s`", match.hosts))})
+%{~ if length(match.paths) > 0 || length(match.path_prefixes) > 0 ~}
+ &&
+%{~ if length(match.paths) > 0 && length(match.path_prefixes) > 0 ~}
+ (
+%{~ endif}
+%{~ if length(match.paths) > 0 ~}
+ Path(${join(",", formatlist("`%s`", match.paths))})
+%{~ endif ~}
+%{~ if length(match.paths) > 0 && length(match.path_prefixes) > 0 ~}
+ ||
+%{~ endif ~}
+%{~ if length(match.path_prefixes) > 0 ~}
+ PathPrefix(${join(",", formatlist("`%s`", match.path_prefixes))})
+%{~ endif ~}
+%{~ if length(match.paths) > 0 && length(match.path_prefixes) > 0 ~}
+ )
+%{~ endif}
+%{~ endif}
 %{ if anytrue(values(redirect)) || length(middlewares) > 0 ~}
       middlewares:
 %{ endif ~}
@@ -21,6 +39,9 @@ spec:
 %{ for middleware in middlewares ~}
         - name: ${middleware}
 %{ endfor ~}
+%{ if priority != null ~}
+      priority: ${priority}
+%{ endif ~}
       services:
         - name: ${service.name}
           port: ${service.port}
@@ -30,4 +51,4 @@ spec:
               name: lb_${service.name}
 %{ endif ~}
   tls:
-    secretName: ${hostname}
+    secretName: ${tls.secret_name}

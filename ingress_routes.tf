@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with Traefik Terraform module.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Traefik Terraform module.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 resource "kubernetes_manifest" "ingress_routes" {
@@ -22,14 +22,10 @@ resource "kubernetes_manifest" "ingress_routes" {
 
   manifest = yamldecode(templatefile(
     "${path.module}/templates/manifests/ingress-route.yaml.tpl",
-    {
-      name        = each.key
-      namespace   = each.value.namespace
-      middlewares = each.value.middlewares
-      hostname    = each.value.hostname
-      service     = each.value.service
-      redirect    = each.value.redirect
-    }
+    merge(
+      { name = each.key },
+      { for k, v in each.value : k => v }
+    )
   ))
 
   depends_on = [
