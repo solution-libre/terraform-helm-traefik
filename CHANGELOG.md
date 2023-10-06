@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- markdownlint-configure-file { "MD024": { "allow_different_nesting": true } } -->
 
+## [0.15.0] 2023-10-06
+
+### Added
+
+- `regex` attribute of `redirects` attribute of input variable `ingress_routes` to manage RedirectRegex
+
+### Changed
+
+- Bump generic module version from 0.5.0 to 0.6.0
+- Rename `redirect` attribute of input variable `ingress_routes` to `redirects`
+
 ## [0.14.0] 2023-10-05
 
 ### Added

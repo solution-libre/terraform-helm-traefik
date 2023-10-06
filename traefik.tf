@@ -19,7 +19,7 @@
 
 module "generic" {
   source  = "solution-libre/generic/helm"
-  version = "0.5.0"
+  version = "0.6.0"
 
   helm_release     = var.helm_release
   namespace        = var.namespace

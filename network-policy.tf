@@ -25,7 +25,7 @@ locals {
 }
 
 resource "kubernetes_network_policy" "traefik_allow_ingress" {
-  count = var.network_policies.allow_ingress_enabled ? 1 : 0
+  count = var.network_policies.ingress.allow.external.enabled ? 1 : 0
 
   metadata {
     name      = "${module.generic.namespace}-allow-ingress"
@@ -51,7 +51,7 @@ resource "kubernetes_network_policy" "traefik_allow_ingress" {
       }
 
       dynamic "from" {
-        for_each = var.network_policies.ingress_cidrs
+        for_each = var.network_policies.ingress.allow.external.from_cidrs
         content {
           ip_block {
             cidr = from.value

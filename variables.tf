@@ -52,9 +52,14 @@ variable "ingress_routes" {
     namespace   = string
     middlewares = optional(list(string), [])
     priority    = optional(number)
-    redirect = optional(object({
+    redirects = optional(object({
       from_non_www_to_www = optional(bool, false)
       from_www_to_non_www = optional(bool, false)
+      regex = optional(map(object({
+        permanent   = optional(bool, false)
+        regex       = string
+        replacement = string
+      })), {})
     }), {})
     service = object({
       name   = string
@@ -150,11 +155,29 @@ variable "network_policies" {
   default     = {}
   description = "Traefik network policies configuration"
   type = object({
-    allow_ingress_enabled    = optional(bool, true)
-    allow_monitoring_enabled = optional(bool, false)
-    allow_namespace_enabled  = optional(bool, true)
-    default_deny_enabled     = optional(bool, true)
-    ingress_cidrs            = optional(list(string), ["0.0.0.0/0"])
+    egress = optional(object({
+      allow = optional(object({
+        within_namespace = optional(bool, false) # Allow egress traffic within the namespace
+      }), {})
+      default = optional(object({
+        allow_all = optional(bool, false) # By default, allow all egress traffic
+        deny_all  = optional(bool, false) # By default, deny all egress traffic
+      }), {})
+    }), {})
+    ingress = optional(object({
+      allow = optional(object({
+        external = optional(object({
+          enabled    = optional(bool, true)                  # Allowing external ingress
+          from_cidrs = optional(list(string), ["0.0.0.0/0"]) # From these CIDRs
+        }), {})
+        monitoring_namespace = optional(bool, false) # Allow ingress traffic from the namespace named monitoring
+        within_namespace     = optional(bool, false) # Allow ingress traffic within the namespace
+      }), {})
+      default = optional(object({
+        allow_all = optional(bool, false) # By default, allow all ingress traffic
+        deny_all  = optional(bool, false) # By default, deny all ingress traffic
+      }), {})
+    }), {})
   })
 }
 

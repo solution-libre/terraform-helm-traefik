@@ -27,15 +27,18 @@ spec:
  )
 %{~ endif}
 %{~ endif}
-%{ if anytrue(values(redirect)) || length(middlewares) > 0 ~}
+%{ if anytrue([redirects.from_non_www_to_www, redirects.from_www_to_non_www]) || length(redirects.regex) > 0  || length(middlewares) > 0 ~}
       middlewares:
 %{ endif ~}
-%{ if redirect.from_non_www_to_www ~}
+%{ if redirects.from_non_www_to_www ~}
         - name: from-non-www-to-www-redirect
 %{ endif ~}
-%{ if redirect.from_www_to_non_www ~}
+%{ if redirects.from_www_to_non_www ~}
         - name: from-www-to-non-www-redirect
 %{ endif ~}
+%{ for name, regex in redirects.regex ~}
+        - name: ${name}-redirect
+%{ endfor ~}
 %{ for middleware in middlewares ~}
         - name: ${middleware}
 %{ endfor ~}
