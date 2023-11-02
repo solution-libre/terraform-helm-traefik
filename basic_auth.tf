@@ -17,34 +17,32 @@
  * along with Traefik Terraform module.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-resource "kubernetes_manifest" "ingress_routes" {
-  for_each = var.ingress_routes
+resource "kubernetes_secret" "basic_auth" {
+  for_each = nonsensitive(var.ingress_routes_basic_auth)
 
-  manifest = yamldecode(templatefile(
-    "${path.module}/templates/manifests/ingress-route.yaml.tpl",
-    merge(
-      { name = each.key },
-      { for k, v in each.value : k => v },
-      { basic_auth = contains(keys(nonsensitive(var.ingress_routes_basic_auth)), each.key) }
-    )
-  ))
+  metadata {
+    name      = "${each.key}-basic-auth"
+    namespace = var.ingress_routes[each.key].namespace
+  }
 
-  depends_on = [
-    module.generic
-  ]
+  data = {
+    username = each.value.username
+    password = each.value.password
+  }
+
+  type = "kubernetes.io/basic-auth"
 }
 
-moved {
-  from = kubernetes_manifest.ingress_route
-  to   = kubernetes_manifest.ingress_routes
-}
+resource "kubernetes_manifest" "middlewares_basic_auth" {
+  for_each = nonsensitive(var.ingress_routes_basic_auth)
 
-resource "kubernetes_manifest" "tls_options" {
   manifest = yamldecode(templatefile(
-    "${path.module}/templates/manifests/tls-options.yaml.tpl",
+    "${path.module}/templates/manifests/middlewares/basic-auth.yaml.tpl",
     {
-      name      = var.helm_release.name
-      namespace = module.generic.namespace
+      name      = each.key
+      namespace = var.ingress_routes[each.key].namespace
     }
   ))
+
+  depends_on = [module.generic]
 }

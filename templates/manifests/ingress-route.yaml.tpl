@@ -27,8 +27,11 @@ spec:
  )
 %{~ endif}
 %{~ endif}
-%{ if anytrue([redirects.from_non_www_to_www, redirects.from_www_to_non_www]) || length(redirects.regex) > 0  || length(middlewares) > 0 ~}
+%{ if basic_auth || anytrue([redirects.from_non_www_to_www, redirects.from_www_to_non_www]) || length(redirects.regex) > 0  || length(middlewares) > 0 ~}
       middlewares:
+%{ endif ~}
+%{ if basic_auth ~}
+        - name: ${name}-basic-auth
 %{ endif ~}
 %{ if redirects.from_non_www_to_www ~}
         - name: from-non-www-to-www-redirect
