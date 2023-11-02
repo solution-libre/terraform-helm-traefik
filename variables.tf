@@ -77,6 +77,16 @@ variable "ingress_routes" {
   }
 }
 
+variable "ingress_routes_basic_auth" {
+  default     = {}
+  description = "Map of ingress routes Basic Authentication"
+  sensitive   = true
+  type = map(object({
+    password = string
+    username = string
+  }))
+}
+
 variable "ingress_routes_tcp" {
   default     = {}
   description = "Map of ingress routes TCP"

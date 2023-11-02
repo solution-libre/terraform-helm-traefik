@@ -1,7 +1,7 @@
-apiVersion: traefik.io/v1alpha1
+apiVersion: traefik.containo.us/v1alpha1
 kind: Middleware
 metadata:
-  name: basic-auth
+  name: ${name}-basic-auth
   namespace: ${namespace}
 spec:
   basicAuth:

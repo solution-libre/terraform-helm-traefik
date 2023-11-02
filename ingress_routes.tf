@@ -24,7 +24,8 @@ resource "kubernetes_manifest" "ingress_routes" {
     "${path.module}/templates/manifests/ingress-route.yaml.tpl",
     merge(
       { name = each.key },
-      { for k, v in each.value : k => v }
+      { for k, v in each.value : k => v },
+      { basic_auth = contains(keys(nonsensitive(var.ingress_routes_basic_auth)), each.key) }
     )
   ))
 
