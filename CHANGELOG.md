@@ -7,6 +7,73 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- markdownlint-configure-file { "MD024": { "allow_different_nesting": true } } -->
 
+## [0.15.0] 2023-10-06
+
+### Added
+
+- `regex` attribute of `redirects` attribute of input variable `ingress_routes` to manage RedirectRegex
+
+### Changed
+
+- Bump generic module version from 0.5.0 to 0.6.0
+- Rename `redirect` attribute of input variable `ingress_routes` to `redirects`
+
+## [0.14.0] 2023-10-05
+
+### Added
+
+- `priority`, `tls` and `match` attributes of `ingress_routes` input variable
+
+### Changed
+
+- It is now possible to define multiple hostnames and their associated paths and/or prefixed paths in `match` attribute of
+`ingress_routes` input variable
+- The TLS secret name is no longuer the hostname
+
+### Removed
+
+- `hostname` attribute of `ingress_routes` input variable
+
+## [0.13.2] 2023-09-15
+
+### Fixed
+
+- Display the right service on Grafana instead of traefik-metrics
+
+## [0.13.1] 2023-09-14
+
+### Changed
+
+- Bump generic module version from 0.4.1 to 0.5.0
+
+## [0.13.0] 2023-09-14
+
+### Added
+
+- Input variable `metrics` to configure metrics
+- Input variable `logs` to configure logs
+
+### Changed
+
+- Bump chart version from 17.0.5 to 20.8.0
+
+## [0.12.0] 2023-08-02
+
+### Added
+
+- Input variable `kubernetes_providers` to configure providers
+
+## [0.11.0] 2023-07-05
+
+### Added
+
+- Ability to disable HTTP to HTTPs permanent redirection
+- Attributes of input variables documentation
+
+### Changed
+
+- Input variable `lb_ip` are now an attribute of `ports`
+
 ## [0.10.1] 2023-06-29
 
 ### Changed
@@ -169,6 +236,12 @@ attribute `from_non_www_to_www` and `from_www_to_non_www`
 
 - Terraform module creation
 
+[0.14.0]: https://usine.solution-libre.fr/french-high-availability-multi-cloud-hosting/terraform-modules/traefik/-/compare/v0.13.2...v0.14.0
+[0.13.2]: https://usine.solution-libre.fr/french-high-availability-multi-cloud-hosting/terraform-modules/traefik/-/compare/v0.13.1...v0.13.2
+[0.13.1]: https://usine.solution-libre.fr/french-high-availability-multi-cloud-hosting/terraform-modules/traefik/-/compare/v0.13.0...v0.13.1
+[0.13.0]: https://usine.solution-libre.fr/french-high-availability-multi-cloud-hosting/terraform-modules/traefik/-/compare/v0.12.0...v0.13.0
+[0.12.0]: https://usine.solution-libre.fr/french-high-availability-multi-cloud-hosting/terraform-modules/traefik/-/compare/v0.11.0...v0.12.0
+[0.11.0]: https://usine.solution-libre.fr/french-high-availability-multi-cloud-hosting/terraform-modules/traefik/-/compare/v0.10.1...v0.11.0
 [0.10.1]: https://usine.solution-libre.fr/french-high-availability-multi-cloud-hosting/terraform-modules/traefik/-/compare/v0.10.0...v0.10.1
 [0.10.0]: https://usine.solution-libre.fr/french-high-availability-multi-cloud-hosting/terraform-modules/traefik/-/compare/v0.9.1...v0.10.0
 [0.9.1]: https://usine.solution-libre.fr/french-high-availability-multi-cloud-hosting/terraform-modules/traefik/-/compare/v0.9.0...v0.9.1

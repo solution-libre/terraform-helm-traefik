@@ -22,10 +22,15 @@ module "traefik" {
 
   ingress = {
     website = {
-      hostname     = "domain.tld"
+      match = {
+        hosts = ["domain.tld"]
+      }
       namespace    = "default"
       service_name = "website"
       service_port = 80
+      tls = {
+        secret_name = "domain.tld"
+      }
     }
   }
 }

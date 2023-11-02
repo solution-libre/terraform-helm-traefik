@@ -1,6 +1,7 @@
 {
 	"recommendations": [
 		"gitlab.gitlab-workflow",
+		"ymotongpoo.licenser",
 		"hashicorp.terraform",
 		"ms-kubernetes-tools.vscode-kubernetes-tools",
 		"davidanson.vscode-markdownlint",
