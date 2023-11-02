@@ -42,15 +42,10 @@ validate:
 
 markdownlint:
   stage: validate
-  image:
-    name: registry.gitlab.com/06kellyjac/docker_markdownlint-cli:latest
-    entrypoint:
-      - '/usr/bin/env'
+  image: registry.gitlab.com/pipeline-components/markdownlint-cli2:latest
   cache: []
-  before_script:
-    - markdownlint --version
   script:
-    - markdownlint '**/*.md'
+    - markdownlint-cli2 '**/*.md'
   rules:
     - changes:
       - '**/*.md'
