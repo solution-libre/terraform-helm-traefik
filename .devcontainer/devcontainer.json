@@ -7,6 +7,9 @@
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	"features": {
+		"ghcr.io/rocker-org/devcontainer-features/apt-packages:1": {
+			"packages": "bash-completion"
+		},
 		"ghcr.io/devcontainers/features/terraform:1": {
 			"installTerraformDocs": true,
 			"installTFsec": true,
@@ -19,7 +22,7 @@
 	// "forwardPorts": [],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	// "postCreateCommand": "terraform version",
+	"postCreateCommand": "echo 'source <(terraform-docs completion bash)' >> ~/.bashrc",
 
 	// Configure tool-specific properties.
 	"customizations": {

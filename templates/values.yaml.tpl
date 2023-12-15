@@ -29,11 +29,15 @@ ports:
 %{ if ports.http_to_https_redirection ~}
     redirectTo: websecure
 %{ endif ~}
+    forwardedHeaders:
+      trustedIPs: ${jsonencode(compact(["127.0.0.1/32", "10.0.0.0/8", "100.64.0.0/10", ports.lb_ip]))}
     proxyProtocol:
       trustedIPs: ${jsonencode(compact(["127.0.0.1/32", "10.0.0.0/8", "100.64.0.0/10", ports.lb_ip]))}
   websecure:
     middlewares:
       - ${namespace}-${name}-default@kubernetescrd
+    forwardedHeaders:
+      trustedIPs: ${jsonencode(compact(["127.0.0.1/32", "10.0.0.0/8", "100.64.0.0/10", ports.lb_ip]))}
     proxyProtocol:
       trustedIPs: ${jsonencode(compact(["127.0.0.1/32", "10.0.0.0/8", "100.64.0.0/10", ports.lb_ip]))}
     tls:
