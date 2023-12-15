@@ -1,4 +1,14 @@
 {
     "licenser.projectName": "Traefik Terraform module",
-    "licenser.license": "GPLv3"
+    "licenser.license": "GPLv3",
+    "[terraform]": {
+        "editor.defaultFormatter": "hashicorp.terraform",
+        "editor.formatOnSave": true,
+        "editor.formatOnSaveMode": "file"
+      },
+      "[terraform-vars]": {
+        "editor.defaultFormatter": "hashicorp.terraform",
+        "editor.formatOnSave": true,
+        "editor.formatOnSaveMode": "file"
+      }
 }

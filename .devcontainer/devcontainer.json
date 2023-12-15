@@ -1,0 +1,46 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/go
+{
+	"name": "Terraform",
+	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+	"image": "mcr.microsoft.com/vscode/devcontainers/base:debian-12",
+
+	// Features to add to the dev container. More info: https://containers.dev/features.
+	"features": {
+		"ghcr.io/devcontainers/features/terraform:1": {
+			"installTerraformDocs": true,
+			"installTFsec": true,
+			"version": "1.5",
+			"terragrunt": "none"
+		}
+	  },
+
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// "forwardPorts": [],
+
+	// Use 'postCreateCommand' to run commands after the container is created.
+	// "postCreateCommand": "terraform version",
+
+	// Configure tool-specific properties.
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"gitlab.gitlab-workflow",
+				"ymotongpoo.licenser",
+				"hashicorp.terraform",
+				"tfsec.tfsec",
+				"ms-kubernetes-tools.vscode-kubernetes-tools",
+				"davidanson.vscode-markdownlint",
+				"redhat.vscode-yaml"
+			]
+		}
+	}
+
+	// ,"remoteEnv": {
+	//   "TF_LOG": "info",
+	//   "TF_LOG_PATH": "./terraform.log"
+	// }
+
+	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+	// "remoteUser": "root"
+}
