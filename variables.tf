@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2022-2023 Solution Libre <contact@solution-libre.fr>
+ * Copyright (C) 2022-2024 Solution Libre <contact@solution-libre.fr>
  * 
  * This file is part of Traefik Terraform module.
  * 
@@ -25,6 +25,11 @@ variable "deployment" {
     kind     = optional(string, "Deployment") # Deployment or DaemonSet
     replicas = optional(number, 1)            # Number of pods of the deployment (only applies when kind == Deployment)
   })
+
+  validation {
+    condition     = contains(["Deployment", "DaemonSet"], var.deployment.kind)
+    error_message = "Available kind are Deployment and DaemonSet."
+  }
 }
 
 variable "helm_release" {
@@ -115,14 +120,37 @@ variable "logs" {
   default     = {}
   description = "Traefik logs configuration"
   type = object({
+    access = optional(object({
+      enabled = optional(bool, false)
+      fields = optional(object({
+        general = optional(object({
+          defaultmode = optional(string, "keep")  # Available modes: keep, drop, redact
+          names       = optional(map(string), {}) # Names of the fields to limit. Example: { ClientUsername = "drop" }
+        }), {})
+        headers = optional(object({
+          defaultmode = optional(string, "drop")  # Available modes: keep, drop, redact
+          names       = optional(map(string), {}) # Names of the fields to limit. Example: { User-Agent = "redact" }
+        }), {})
+      }), {})
+    }), {})
     general = optional(object({
-      level = optional(string, "ERROR") # Logging levels
+      level = optional(string, "ERROR") # Logging levels. Alternative logging levels are DEBUG, PANIC, FATAL, ERROR, WARN, and INFO.
     }), {})
   })
 
   validation {
+    condition     = contains(["keep", "drop", "redact"], var.logs.access.fields.general.defaultmode)
+    error_message = "Available mode are keep, drop and redact."
+  }
+
+  validation {
+    condition     = contains(["keep", "drop", "redact"], var.logs.access.fields.headers.defaultmode)
+    error_message = "Available mode are keep, drop and redact."
+  }
+
+  validation {
     condition     = contains(["DEBUG", "PANIC", "FATAL", "ERROR", "WARN", "INFO"], var.logs.general.level)
-    error_message = "Logging levels are DEBUG, PANIC, FATAL, ERROR, WARN, and INFO."
+    error_message = "Available logging levels are DEBUG, PANIC, FATAL, ERROR, WARN and INFO."
   }
 }
 

@@ -5,7 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-<!-- markdownlint-configure-file { "MD024": { "allow_different_nesting": true } } -->
+<!-- markdownlint-configure-file { "MD024": { "siblings_only": true } } -->
+
+## [0.15.3] 2024-01-25
+
+### Added
+
+- Validation in `deployement` input variable
+- `access` map attribute in `logs` input variable
 
 ## [0.15.2] 2023-12-15
 
@@ -248,6 +255,7 @@ attribute `from_non_www_to_www` and `from_www_to_non_www`
 
 - Terraform module creation
 
+[0.15.3]: https://usine.solution-libre.fr/french-high-availability-multi-cloud-hosting/terraform-modules/traefik/-/compare/v0.15.2...v0.15.3
 [0.15.2]: https://usine.solution-libre.fr/french-high-availability-multi-cloud-hosting/terraform-modules/traefik/-/compare/v0.15.1...v0.15.2
 [0.15.1]: https://usine.solution-libre.fr/french-high-availability-multi-cloud-hosting/terraform-modules/traefik/-/compare/v0.15.0...v0.15.1
 [0.15.0]: https://usine.solution-libre.fr/french-high-availability-multi-cloud-hosting/terraform-modules/traefik/-/compare/v0.14.0...v0.15.0

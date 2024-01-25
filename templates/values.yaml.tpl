@@ -11,6 +11,24 @@ ingressRoute:
   dashboard:
     enabled: false
 logs:
+%{ if logs.access.enabled ~}
+  access:
+    enabled: ${logs.access.enabled}
+    fields:
+      general:
+        defaultmode: ${logs.access.fields.general.defaultmode}
+%{ if length(logs.access.fields.general.names) > 0 ~}
+        names:
+          ${indent(10, yamlencode(logs.access.fields.general.names))}
+%{ endif ~}
+      headers:
+        defaultmode: drop
+%{ if length(logs.access.fields.headers.names) > 0 ~}
+        names:
+          ${indent(10, yamlencode(logs.access.fields.headers.names))}
+%{ endif ~}
+
+%{ endif ~}
   general:
     level: ${logs.general.level}
 metrics:
