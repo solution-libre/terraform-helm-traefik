@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- markdownlint-configure-file { "MD024": { "siblings_only": true } } -->
 
+## [0.16.0] 2024-01-26
+
+### Added
+
+- `middlewares` input variable
+- StripPrefix middleware template
+
+### Changed
+
+- Renamed `middlewares` attribute of input variable `ingress_routes` to `custom_middlewares`
+- Renamed `ingresss_routes_basic_auth` input variable to `middlewares_basic_auth`
+
 ## [0.15.3] 2024-01-25
 
 ### Added
@@ -255,6 +267,7 @@ attribute `from_non_www_to_www` and `from_www_to_non_www`
 
 - Terraform module creation
 
+[0.16.0]: https://usine.solution-libre.fr/french-high-availability-multi-cloud-hosting/terraform-modules/traefik/-/compare/v0.15.3...v0.16.0
 [0.15.3]: https://usine.solution-libre.fr/french-high-availability-multi-cloud-hosting/terraform-modules/traefik/-/compare/v0.15.2...v0.15.3
 [0.15.2]: https://usine.solution-libre.fr/french-high-availability-multi-cloud-hosting/terraform-modules/traefik/-/compare/v0.15.1...v0.15.2
 [0.15.1]: https://usine.solution-libre.fr/french-high-availability-multi-cloud-hosting/terraform-modules/traefik/-/compare/v0.15.0...v0.15.1

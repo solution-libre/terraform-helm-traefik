@@ -49,14 +49,14 @@ variable "ingress_routes" {
   default     = {}
   description = "Map of ingress routes"
   type = map(object({
+    custom_middlewares = optional(list(string), []) # Middlewares not managed by this module
     match = object({
       hosts         = list(string)
       paths         = optional(list(string), [])
       path_prefixes = optional(list(string), [])
     })
-    namespace   = string
-    middlewares = optional(list(string), [])
-    priority    = optional(number)
+    namespace = string
+    priority  = optional(number)
     redirects = optional(object({
       from_non_www_to_www = optional(bool, false)
       from_www_to_non_www = optional(bool, false)
@@ -80,16 +80,6 @@ variable "ingress_routes" {
     condition     = (lookup(var.ingress_routes, "redirect", null) == null) ? true : !alltrue([var.ingress_routes.redirect.from_non_www_to_www, var.ingress_routes.redirect.from_www_to_non_www])
     error_message = "Both `from_non_www_to_www` and `from_www_to_non_www` are set to true (but are exclusive)."
   }
-}
-
-variable "ingress_routes_basic_auth" {
-  default     = {}
-  description = "Map of ingress routes Basic Authentication"
-  sensitive   = true
-  type = map(object({
-    password = string
-    username = string
-  }))
 }
 
 variable "ingress_routes_tcp" {
@@ -169,6 +159,29 @@ variable "metrics" {
       }), {})
     }), {})
   })
+}
+
+variable "middlewares" {
+  default     = {}
+  description = "Traefik middlewares"
+  type = object({
+    strip_prefix = optional(map(object({
+      force_slash    = optional(bool) # The resulting stripped path is not the empty string, by replacing it with / when necessary
+      ingress_routes = set(string)
+      prefixes       = set(string) # The prefixes to strip from the request URL
+    })), {})
+  })
+}
+
+variable "middlewares_basic_auth" {
+  default     = {}
+  description = "Traefik middlewares Basic Authentication"
+  sensitive   = true
+  type = map(object({
+    ingress_routes = set(string)
+    password       = string
+    username       = string
+  }))
 }
 
 variable "ports" {

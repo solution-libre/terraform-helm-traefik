@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2023 Solution Libre <contact@solution-libre.fr>
+ * Copyright (C) 2023-2024 Solution Libre <contact@solution-libre.fr>
  * 
  * This file is part of Traefik Terraform module.
  * 
@@ -25,7 +25,12 @@ resource "kubernetes_manifest" "ingress_routes" {
     merge(
       { name = each.key },
       { for k, v in each.value : k => v },
-      { basic_auth = contains(keys(nonsensitive(var.ingress_routes_basic_auth)), each.key) }
+      {
+        middlewares = concat(
+          compact([for name, values in nonsensitive(var.middlewares_basic_auth) : (contains(values.ingress_routes, each.key) ? "${name}-basic-auth" : null)]),
+          compact([for name, values in var.middlewares.strip_prefix : (contains(values.ingress_routes, each.key) ? "${name}-strip-prefix" : null)])
+        )
+      }
     )
   ))
 

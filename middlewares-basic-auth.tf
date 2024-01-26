@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2023 Solution Libre <contact@solution-libre.fr>
+ * Copyright (C) 2023-2024 Solution Libre <contact@solution-libre.fr>
  * 
  * This file is part of Traefik Terraform module.
  * 
@@ -17,12 +17,27 @@
  * along with Traefik Terraform module.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+locals {
+  middlewares_basic_auth = merge([for name, basic_auth in nonsensitive(var.middlewares_basic_auth) :
+    {
+      for ingress_route in basic_auth.ingress_routes :
+      "${var.ingress_routes[ingress_route].namespace}/${name}" => merge(
+        {
+          name      = name
+          namespace = var.ingress_routes[ingress_route].namespace
+        },
+        { for k, v in basic_auth : k => v }
+      )
+    }
+  ]...)
+}
+
 resource "kubernetes_secret" "basic_auth" {
-  for_each = nonsensitive(var.ingress_routes_basic_auth)
+  for_each = local.middlewares_basic_auth
 
   metadata {
-    name      = "${each.key}-basic-auth"
-    namespace = var.ingress_routes[each.key].namespace
+    name      = "${each.value.name}-basic-auth"
+    namespace = each.value.namespace
   }
 
   data = {
@@ -34,13 +49,13 @@ resource "kubernetes_secret" "basic_auth" {
 }
 
 resource "kubernetes_manifest" "middlewares_basic_auth" {
-  for_each = nonsensitive(var.ingress_routes_basic_auth)
+  for_each = local.middlewares_basic_auth
 
   manifest = yamldecode(templatefile(
     "${path.module}/templates/manifests/middlewares/basic-auth.yaml.tpl",
     {
-      name      = each.key
-      namespace = var.ingress_routes[each.key].namespace
+      name      = each.value.name
+      namespace = each.value.namespace
     }
   ))
 
