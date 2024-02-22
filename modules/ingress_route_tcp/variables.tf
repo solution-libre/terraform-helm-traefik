@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2023 Solution Libre <contact@solution-libre.fr>
+ * Copyright (C) 2024 Solution Libre <contact@solution-libre.fr>
  * 
  * This file is part of Traefik Terraform module.
  * 
@@ -17,25 +17,31 @@
  * along with Traefik Terraform module.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-module "ingress_routes_tcp" {
-  source = "modules/ingress_route_tcp"
+variable "metadata" {
+  description = "Traefik ingress route TCP metadata"
+  type = object({
+    name      = string
+    namespace = optional(string, "default")
+  })
+}
 
-  for_each = var.ingress_routes_tcp
-
-  metadata = {
-    name      = each.key
-    namespace = each.value.namespace
-  }
-
-  spec = {
-    entry_points = [each.value.entry_point.name]
-    routes = {
-      service = each.value.service
-      tls     = each.value.tls
-    }
-  }
-
-  depends_on = [
-    module.generic
-  ]
+variable "spec" {
+  description = "Traefik ingress route TCP specifications"
+  type = object({
+    entry_points = list(string)
+    routes = object({
+      service = object({
+        name = string
+        port = number
+        proxy_protocol = optional(object({
+          enabled = optional(bool, false)
+          version = optional(number, 2)
+        }))
+      })
+      tls = optional(object({
+        enabled     = optional(bool, false)
+        secret_name = string
+      }))
+    })
+  })
 }

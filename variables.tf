@@ -91,13 +91,13 @@ variable "ingress_routes_tcp" {
       port = number
     })
     namespace = string
-    proxy_protocol = optional(object({
-      enabled = optional(bool, false)
-      version = optional(number, 2)
-    }))
     service = object({
       name = string
       port = number
+      proxy_protocol = optional(object({
+        enabled = optional(bool, false)
+        version = optional(number, 2)
+      }))
     })
     tls = optional(object({
       enabled     = optional(bool, false)

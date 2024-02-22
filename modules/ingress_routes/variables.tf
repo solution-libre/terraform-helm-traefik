@@ -26,11 +26,10 @@ variable "metadata" {
 }
 
 variable "spec" {
-  default     = {}
   description = "Traefik ingress route specifications"
   type = object({
     entry_points = optional(list(string), ["websecure"])
-    routes = map(object({
+    routes = object({
       match = object({
         hosts         = list(string)
         paths         = optional(list(string), [])
@@ -46,6 +45,6 @@ variable "spec" {
       tls = object({
         secret_name = string
       })
-    }))
+    })
   })
 }

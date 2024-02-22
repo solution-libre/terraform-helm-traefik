@@ -17,7 +17,7 @@
  * along with Traefik Terraform module.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-resource "kubernetes_manifest" "ingress_routes" {
+resource "kubernetes_manifest" "this" {
   manifest = yamldecode(templatefile(
     "${path.module}/templates/manifests/ingress-route.yaml.tpl",
     {

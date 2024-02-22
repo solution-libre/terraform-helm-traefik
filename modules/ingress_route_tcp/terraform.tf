@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2023 Solution Libre <contact@solution-libre.fr>
+ * Copyright (C) 2024 Solution Libre <contact@solution-libre.fr>
  * 
  * This file is part of Traefik Terraform module.
  * 
@@ -17,25 +17,12 @@
  * along with Traefik Terraform module.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-module "ingress_routes_tcp" {
-  source = "modules/ingress_route_tcp"
-
-  for_each = var.ingress_routes_tcp
-
-  metadata = {
-    name      = each.key
-    namespace = each.value.namespace
-  }
-
-  spec = {
-    entry_points = [each.value.entry_point.name]
-    routes = {
-      service = each.value.service
-      tls     = each.value.tls
+terraform {
+  required_providers {
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = "~> 2.0"
     }
   }
-
-  depends_on = [
-    module.generic
-  ]
+  required_version = ">= 1.3.0"
 }
