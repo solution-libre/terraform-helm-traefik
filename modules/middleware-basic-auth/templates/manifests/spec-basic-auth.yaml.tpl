@@ -1,0 +1,2 @@
+basicAuth:
+  secret: ${name}

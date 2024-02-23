@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2023-2024 Solution Libre <contact@solution-libre.fr>
+ * Copyright (C) 2024 Solution Libre <contact@solution-libre.fr>
  * 
  * This file is part of Traefik Terraform module.
  * 
@@ -17,29 +17,34 @@
  * along with Traefik Terraform module.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-module "basic_auth_middleware" {
-  source = "./modules/middleware-basic-auth"
+locals {
+  name = "${var.metadata.name}-basic-auth"
+}
 
-  for_each = merge([for name, basic_auth in nonsensitive(var.middlewares_basic_auth) :
-    {
-      for ingress_route in basic_auth.ingress_routes :
-      "${var.ingress_routes[ingress_route].namespace}/${name}" => merge(
-        {
-          name      = name
-          namespace = var.ingress_routes[ingress_route].namespace
-        },
-        { for k, v in basic_auth : k => v }
-      )
-    }
-  ]...)
-
-  metadata = {
-    name      = each.value.name
-    namespace = each.value.namespace
+resource "kubernetes_secret" "basic_auth" {
+  metadata {
+    name      = local.name
+    namespace = var.metadata.namespace
   }
 
-  username = each.value.username
-  password = each.value.password
+  data = {
+    username = var.username
+    password = var.password
+  }
 
-  depends_on = [module.generic]
+  type = "kubernetes.io/basic-auth"
+}
+
+module "basic_auth_middleware" {
+  source = "../middleware"
+
+  metadata = {
+    name      = local.name
+    namespace = var.metadata.namespace
+  }
+
+  spec = yamldecode(templatefile(
+    "${path.module}/templates/manifests/spec-basic-auth.yaml.tpl",
+    { name = local.name }
+  ))
 }

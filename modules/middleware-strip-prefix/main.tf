@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2023-2024 Solution Libre <contact@solution-libre.fr>
+ * Copyright (C) 2024 Solution Libre <contact@solution-libre.fr>
  * 
  * This file is part of Traefik Terraform module.
  * 
@@ -17,29 +17,19 @@
  * along with Traefik Terraform module.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-module "basic_auth_middleware" {
-  source = "./modules/middleware-basic-auth"
-
-  for_each = merge([for name, basic_auth in nonsensitive(var.middlewares_basic_auth) :
-    {
-      for ingress_route in basic_auth.ingress_routes :
-      "${var.ingress_routes[ingress_route].namespace}/${name}" => merge(
-        {
-          name      = name
-          namespace = var.ingress_routes[ingress_route].namespace
-        },
-        { for k, v in basic_auth : k => v }
-      )
-    }
-  ]...)
+module "redirect_regex_middleware" {
+  source = "../middleware"
 
   metadata = {
-    name      = each.value.name
-    namespace = each.value.namespace
+    name      = "${var.metadata.name}-strip-prefix"
+    namespace = var.metadata.namespace
   }
 
-  username = each.value.username
-  password = each.value.password
-
-  depends_on = [module.generic]
+  spec = yamldecode(templatefile(
+    "${path.module}/templates/manifests/spec-strip-prefix.yaml.tpl",
+    {
+      force_slash = var.force_slash
+      prefixes    = var.prefixes
+    }
+  ))
 }

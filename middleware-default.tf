@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2023-2024 Solution Libre <contact@solution-libre.fr>
+ * Copyright (C) 2023 Solution Libre <contact@solution-libre.fr>
  * 
  * This file is part of Traefik Terraform module.
  * 
@@ -17,29 +17,26 @@
  * along with Traefik Terraform module.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-module "basic_auth_middleware" {
-  source = "./modules/middleware-basic-auth"
+moved {
+  from = kubernetes_manifest.default_middleware
+  to   = module.default_middleware.kubernetes_manifest.this
+}
 
-  for_each = merge([for name, basic_auth in nonsensitive(var.middlewares_basic_auth) :
-    {
-      for ingress_route in basic_auth.ingress_routes :
-      "${var.ingress_routes[ingress_route].namespace}/${name}" => merge(
-        {
-          name      = name
-          namespace = var.ingress_routes[ingress_route].namespace
-        },
-        { for k, v in basic_auth : k => v }
-      )
-    }
-  ]...)
+module "default_middleware" {
+  source = "./modules/middleware"
 
   metadata = {
-    name      = each.value.name
-    namespace = each.value.namespace
+    name      = "${var.helm_release.name}-default"
+    namespace = module.generic.namespace
   }
 
-  username = each.value.username
-  password = each.value.password
+  spec = yamldecode(templatefile(
+    "${path.module}/templates/manifests/middlewares-spec/default.yaml.tpl",
+    {
+
+      security_headers = var.security_headers
+    }
+  ))
 
   depends_on = [module.generic]
 }

@@ -17,7 +17,9 @@
  * along with Traefik Terraform module.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-resource "kubernetes_manifest" "middlewares_strip_prefix" {
+module "strip_prefix_middleware" {
+  source = "./modules/middleware-strip-prefix"
+
   for_each = merge([for name, strip_prefix in var.middlewares.strip_prefix :
     {
       for ingress_route in strip_prefix.ingress_routes :
@@ -31,16 +33,13 @@ resource "kubernetes_manifest" "middlewares_strip_prefix" {
     }
   ]...)
 
-  manifest = yamldecode(templatefile(
-    "${path.module}/templates/manifests/middlewares/strip-prefix.yaml.tpl",
-    merge(
-      {
-        name      = each.value.name
-        namespace = each.value.namespace
-      },
-      { for k, v in each.value : k => v }
-    )
-  ))
+  metadata = {
+    name      = "${each.value.name}-strip-prefix"
+    namespace = each.value.namespace
+  }
+
+  force_slash = each.value.force_slash
+  prefixes    = each.value.prefixes
 
   depends_on = [module.generic]
 }

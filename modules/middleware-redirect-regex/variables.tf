@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2023-2024 Solution Libre <contact@solution-libre.fr>
+ * Copyright (C) 2024 Solution Libre <contact@solution-libre.fr>
  * 
  * This file is part of Traefik Terraform module.
  * 
@@ -17,29 +17,26 @@
  * along with Traefik Terraform module.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-module "basic_auth_middleware" {
-  source = "./modules/middleware-basic-auth"
+variable "metadata" {
+  description = "Traefik middleware Redirect Regex metadata"
+  type = object({
+    name      = string
+    namespace = optional(string, "default")
+  })
+}
 
-  for_each = merge([for name, basic_auth in nonsensitive(var.middlewares_basic_auth) :
-    {
-      for ingress_route in basic_auth.ingress_routes :
-      "${var.ingress_routes[ingress_route].namespace}/${name}" => merge(
-        {
-          name      = name
-          namespace = var.ingress_routes[ingress_route].namespace
-        },
-        { for k, v in basic_auth : k => v }
-      )
-    }
-  ]...)
+variable "permanent" {
+  default     = false
+  description = "Set the permanent option to true to apply a permanent redirection"
+  type        = bool
+}
 
-  metadata = {
-    name      = each.value.name
-    namespace = each.value.namespace
-  }
+variable "regex" {
+  description = "The regular expression to match and capture elements from the request URL"
+  type        = string
+}
 
-  username = each.value.username
-  password = each.value.password
-
-  depends_on = [module.generic]
+variable "replacement" {
+  description = "How to modify the URL to have the new target URL"
+  type        = string
 }
