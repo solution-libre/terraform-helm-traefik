@@ -17,12 +17,27 @@
  * along with Traefik Terraform module.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-terraform {
-  required_providers {
-    kubernetes = {
-      source  = "hashicorp/kubernetes"
-      version = "~> 2.0"
+module "generic" {
+  source  = "solution-libre/generic/helm"
+  version = "0.6.0"
+
+  helm_release     = var.helm_release
+  namespace        = var.namespace
+  network_policies = var.network_policies
+
+  values = templatefile(
+    "${path.module}/templates/values.yaml.tpl",
+    {
+      deployment           = var.deployment
+      experimental         = var.experimental
+      ingress_routes_tcp   = var.ingress_routes_tcp
+      logs                 = var.logs
+      metrics              = var.metrics
+      ports                = var.ports
+      name                 = var.helm_release.name
+      namespace            = var.namespace.name
+      service              = var.service
+      kubernetes_providers = var.kubernetes_providers
     }
-  }
-  required_version = ">= 1.3.0"
+  )
 }

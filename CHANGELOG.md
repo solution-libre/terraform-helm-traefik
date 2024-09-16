@@ -2,10 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 <!-- markdownlint-configure-file { "MD024": { "siblings_only": true } } -->
+
+## [0.17.0] 2024-09-16
+
+### Changed
+
+- IngressRoute, IngressRouteTCP and Middlewares have their own sub-modules.
+**You need to add some `moved` blocks to avoid recreations.**
 
 ## [0.16.0] 2024-01-26
 
@@ -267,6 +274,7 @@ attribute `from_non_www_to_www` and `from_www_to_non_www`
 
 - Terraform module creation
 
+[0.17.0]: https://usine.solution-libre.fr/french-high-availability-multi-cloud-hosting/terraform-modules/traefik/-/compare/v0.16.0...v0.17.0
 [0.16.0]: https://usine.solution-libre.fr/french-high-availability-multi-cloud-hosting/terraform-modules/traefik/-/compare/v0.15.3...v0.16.0
 [0.15.3]: https://usine.solution-libre.fr/french-high-availability-multi-cloud-hosting/terraform-modules/traefik/-/compare/v0.15.2...v0.15.3
 [0.15.2]: https://usine.solution-libre.fr/french-high-availability-multi-cloud-hosting/terraform-modules/traefik/-/compare/v0.15.1...v0.15.2
