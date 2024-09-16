@@ -17,29 +17,25 @@
  * along with Traefik Terraform module.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-module "basic_auth_middleware" {
-  source = "./modules/middleware-basic-auth"
+module "ingress_routes_tcp" {
+  source = "./modules/ingress-route-tcp"
 
-  for_each = merge([for name, basic_auth in nonsensitive(var.middlewares_basic_auth) :
-    {
-      for ingress_route in basic_auth.ingress_routes :
-      "${var.ingress_routes[ingress_route].metadata.namespace}/${name}" => merge(
-        {
-          name      = name
-          namespace = var.ingress_routes[ingress_route].metadata.namespace
-        },
-        { for k, v in basic_auth : k => v }
-      )
-    ... }
-  ]...)
+  for_each = var.ingress_routes_tcp
 
-  metadata = {
-    name      = each.value[0].name
-    namespace = each.value[0].namespace
+  metadata = merge(
+    { name = each.key },
+    each.value.metadata
+  )
+
+  spec = {
+    entry_points = [each.value.entry_point.name]
+    routes = {
+      service = each.value.service
+      tls     = each.value.tls
+    }
   }
 
-  username = each.value[0].username
-  password = each.value[0].password
-
-  depends_on = [module.generic]
+  depends_on = [
+    module.generic
+  ]
 }

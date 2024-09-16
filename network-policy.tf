@@ -34,10 +34,8 @@ resource "kubernetes_network_policy" "traefik_allow_ingress" {
 
   spec {
     pod_selector {
-      match_expressions {
-        key      = "app.kubernetes.io/name"
-        operator = "In"
-        values   = ["traefik"]
+      match_labels = {
+        "app.kubernetes.io/name" = var.helm_release.name
       }
     }
 

@@ -17,29 +17,34 @@
  * along with Traefik Terraform module.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-module "strip_prefix_middleware" {
-  source = "./modules/middleware-strip-prefix"
+locals {
+  name = "${var.metadata.name}-basic-auth"
+}
 
-  for_each = merge([for name, strip_prefix in var.middlewares.strip_prefix :
-    {
-      for ingress_route in strip_prefix.ingress_routes :
-      "${var.ingress_routes[ingress_route].metadata.namespace}/${name}" => merge(
-        {
-          name      = name
-          namespace = var.ingress_routes[ingress_route].metadata.namespace
-        },
-        { for k, v in strip_prefix : k => v }
-      )...
-    }
-  ]...)
-
-  metadata = {
-    name      = "${each.value[0].name}-strip-prefix"
-    namespace = each.value[0].namespace
+resource "kubernetes_secret" "basic_auth" {
+  metadata {
+    name      = local.name
+    namespace = var.metadata.namespace
   }
 
-  force_slash = each.value[0].force_slash
-  prefixes    = each.value[0].prefixes
+  data = {
+    username = var.username
+    password = var.password
+  }
 
-  depends_on = [module.generic]
+  type = "kubernetes.io/basic-auth"
+}
+
+module "basic_auth_middleware" {
+  source = "../middleware"
+
+  metadata = {
+    name      = local.name
+    namespace = var.metadata.namespace
+  }
+
+  spec = yamldecode(templatefile(
+    "${path.module}/templates/manifests/spec-basic-auth.yaml.tpl",
+    { name = local.name }
+  ))
 }

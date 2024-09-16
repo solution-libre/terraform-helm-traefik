@@ -17,29 +17,20 @@
  * along with Traefik Terraform module.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-module "strip_prefix_middleware" {
-  source = "./modules/middleware-strip-prefix"
-
-  for_each = merge([for name, strip_prefix in var.middlewares.strip_prefix :
-    {
-      for ingress_route in strip_prefix.ingress_routes :
-      "${var.ingress_routes[ingress_route].metadata.namespace}/${name}" => merge(
-        {
-          name      = name
-          namespace = var.ingress_routes[ingress_route].metadata.namespace
-        },
-        { for k, v in strip_prefix : k => v }
-      )...
-    }
-  ]...)
+module "redirect_regex_middleware" {
+  source = "../middleware"
 
   metadata = {
-    name      = "${each.value[0].name}-strip-prefix"
-    namespace = each.value[0].namespace
+    name      = "${var.metadata.name}-redirect"
+    namespace = var.metadata.namespace
   }
 
-  force_slash = each.value[0].force_slash
-  prefixes    = each.value[0].prefixes
-
-  depends_on = [module.generic]
+  spec = yamldecode(templatefile(
+    "${path.module}/templates/manifests/spec-redirect-regex.yaml.tpl",
+    {
+      permanent   = var.permanent
+      regex       = var.regex
+      replacement = var.replacement
+    }
+  ))
 }

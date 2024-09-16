@@ -29,6 +29,7 @@ module "generic" {
     "${path.module}/templates/values.yaml.tpl",
     {
       deployment           = var.deployment
+      experimental         = var.experimental
       ingress_routes_tcp   = var.ingress_routes_tcp
       logs                 = var.logs
       metrics              = var.metrics

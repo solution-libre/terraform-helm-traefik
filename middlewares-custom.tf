@@ -17,29 +17,36 @@
  * along with Traefik Terraform module.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-module "strip_prefix_middleware" {
-  source = "./modules/middleware-strip-prefix"
-
-  for_each = merge([for name, strip_prefix in var.middlewares.strip_prefix :
-    {
-      for ingress_route in strip_prefix.ingress_routes :
-      "${var.ingress_routes[ingress_route].metadata.namespace}/${name}" => merge(
-        {
-          name      = name
-          namespace = var.ingress_routes[ingress_route].metadata.namespace
-        },
-        { for k, v in strip_prefix : k => v }
-      )...
+locals {
+  values = merge([for name, custom in var.middlewares.custom : {
+    for ingress_route in custom.ingress_routes :
+    "${var.ingress_routes[ingress_route].metadata.namespace}/${name}" => merge(
+      {
+        name      = name
+        namespace = var.ingress_routes[ingress_route].metadata.namespace
+      },
+      { for k, v in custom : k => v }
+    )...
     }
   ]...)
+}
+
+
+module "custom_middleware" {
+  source = "./modules/middleware"
+
+  for_each = local.values
 
   metadata = {
-    name      = "${each.value[0].name}-strip-prefix"
+    name      = "${each.value[0].name}-custom"
     namespace = each.value[0].namespace
   }
 
-  force_slash = each.value[0].force_slash
-  prefixes    = each.value[0].prefixes
+  spec = each.value[0].spec
 
   depends_on = [module.generic]
+}
+
+output "values" {
+  value = local.values
 }

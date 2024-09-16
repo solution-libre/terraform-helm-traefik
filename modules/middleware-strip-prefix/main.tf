@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2023 Solution Libre <contact@solution-libre.fr>
+ * Copyright (C) 2024 Solution Libre <contact@solution-libre.fr>
  * 
  * This file is part of Traefik Terraform module.
  * 
@@ -17,18 +17,19 @@
  * along with Traefik Terraform module.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-resource "kubernetes_manifest" "ingress_routes_tcp" {
-  for_each = var.ingress_routes_tcp
+module "redirect_regex_middleware" {
+  source = "../middleware"
 
-  manifest = yamldecode(templatefile(
-    "${path.module}/templates/manifests/ingress-route-tcp.yaml.tpl",
-    merge(
-      { name = each.key },
-      { for k, v in each.value : k => v }
-    )
+  metadata = {
+    name      = "${var.metadata.name}-strip-prefix"
+    namespace = var.metadata.namespace
+  }
+
+  spec = yamldecode(templatefile(
+    "${path.module}/templates/manifests/spec-strip-prefix.yaml.tpl",
+    {
+      force_slash = var.force_slash
+      prefixes    = var.prefixes
+    }
   ))
-
-  depends_on = [
-    module.generic
-  ]
 }

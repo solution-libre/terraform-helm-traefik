@@ -17,12 +17,23 @@
  * along with Traefik Terraform module.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-resource "kubernetes_manifest" "default_middleware" {
-  manifest = yamldecode(templatefile(
-    "${path.module}/templates/manifests/middlewares/default.yaml.tpl",
+moved {
+  from = kubernetes_manifest.default_middleware
+  to   = module.default_middleware.kubernetes_manifest.this
+}
+
+module "default_middleware" {
+  source = "./modules/middleware"
+
+  metadata = {
+    name      = "${var.helm_release.name}-default"
+    namespace = module.generic.namespace
+  }
+
+  spec = yamldecode(templatefile(
+    "${path.module}/templates/manifests/middlewares-spec/default.yaml.tpl",
     {
-      name             = var.helm_release.name
-      namespace        = module.generic.namespace
+
       security_headers = var.security_headers
     }
   ))

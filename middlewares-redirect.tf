@@ -17,19 +17,21 @@
  * along with Traefik Terraform module.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-locals {
-  middlewares_redirect_regex = merge(flatten([
+module "redirect_regex_middleware" {
+  source = "./modules/middleware-redirect-regex"
+
+  for_each = merge(flatten([
     for key, ingress_route in var.ingress_routes :
     merge(
       (ingress_route.redirects.from_non_www_to_www) ? {
-        "${ingress_route.namespace}/from-non-www-to-www" = {
+        "${ingress_route.metadata.namespace}/from-non-www-to-www" = {
           permanent   = true
           regex       = "^https?://(?:www\\.)?(.+)"
           replacement = "https://www.$1"
         }
       } : {},
       (ingress_route.redirects.from_www_to_non_www) ? {
-        "${ingress_route.namespace}/from-www-to-non-www" = {
+        "${ingress_route.metadata.namespace}/from-www-to-non-www" = {
           permanent   = true
           regex       = "^https?://www\\.(.+)"
           replacement = "https://$1"
@@ -37,26 +39,19 @@ locals {
       } : {},
       {
         for name, redirect_regex in ingress_route.redirects.regex :
-        "${ingress_route.namespace}/${name}" => redirect_regex
+        "${ingress_route.metadata.namespace}/${name}" => redirect_regex
       }
     )
   ])...)
-}
 
-resource "kubernetes_manifest" "middlewares_redirect_regex" {
-  for_each = local.middlewares_redirect_regex
+  metadata = {
+    name      = split("/", each.key)[1]
+    namespace = split("/", each.key)[0]
+  }
 
-  manifest = yamldecode(templatefile(
-    "${path.module}/templates/manifests/middlewares/redirect-regex.yaml.tpl",
-    merge(
-      {
-        name      = split("/", each.key)[1]
-        namespace = split("/", each.key)[0]
-      },
-      { for k, v in each.value : k => v }
-    )
-
-  ))
+  permanent   = each.value.permanent
+  regex       = each.value.regex
+  replacement = each.value.replacement
 
   depends_on = [module.generic]
 }

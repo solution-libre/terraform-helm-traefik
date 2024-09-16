@@ -17,22 +17,42 @@
  * along with Traefik Terraform module.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-resource "kubernetes_manifest" "ingress_routes" {
+module "ingress_routes" {
+  source = "./modules/ingress-route"
+
   for_each = var.ingress_routes
 
-  manifest = yamldecode(templatefile(
-    "${path.module}/templates/manifests/ingress-route.yaml.tpl",
-    merge(
-      { name = each.key },
+  metadata = merge(
+    { name = each.key },
+    each.value.metadata
+  )
+
+  spec = {
+    entry_points = ["websecure"]
+    routes = merge(
       { for k, v in each.value : k => v },
       {
         middlewares = concat(
-          compact([for name, values in nonsensitive(var.middlewares_basic_auth) : (contains(values.ingress_routes, each.key) ? "${name}-basic-auth" : null)]),
-          compact([for name, values in var.middlewares.strip_prefix : (contains(values.ingress_routes, each.key) ? "${name}-strip-prefix" : null)])
+          each.value.redirects.from_non_www_to_www ? ["from-non-www-to-www-redirect"] : [],
+          each.value.redirects.from_www_to_non_www ? ["from-www-to-non-www-redirect"] : [],
+          [for name, regex in each.value.redirects.regex : "${name}-redirect"],
+          compact([
+            for name, values in nonsensitive(var.middlewares_basic_auth) :
+            (contains(values.ingress_routes, each.key) ? "${name}-basic-auth" : null)
+          ]),
+          compact([
+            for name, values in var.middlewares.custom :
+            (contains(values.ingress_routes, each.key) ? "${name}-custom" : null)
+          ]),
+          compact([
+            for name, values in var.middlewares.strip_prefix :
+            (contains(values.ingress_routes, each.key) ? "${name}-strip-prefix" : null)
+          ]),
+          each.value.custom_middlewares
         )
       }
     )
-  ))
+  }
 
   depends_on = [
     module.generic
@@ -42,14 +62,4 @@ resource "kubernetes_manifest" "ingress_routes" {
 moved {
   from = kubernetes_manifest.ingress_route
   to   = kubernetes_manifest.ingress_routes
-}
-
-resource "kubernetes_manifest" "tls_options" {
-  manifest = yamldecode(templatefile(
-    "${path.module}/templates/manifests/tls-options.yaml.tpl",
-    {
-      name      = var.helm_release.name
-      namespace = module.generic.namespace
-    }
-  ))
 }

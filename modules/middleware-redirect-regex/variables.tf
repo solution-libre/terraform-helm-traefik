@@ -17,29 +17,26 @@
  * along with Traefik Terraform module.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-module "strip_prefix_middleware" {
-  source = "./modules/middleware-strip-prefix"
+variable "metadata" {
+  description = "Traefik middleware Redirect Regex metadata"
+  type = object({
+    name      = string
+    namespace = optional(string, "default")
+  })
+}
 
-  for_each = merge([for name, strip_prefix in var.middlewares.strip_prefix :
-    {
-      for ingress_route in strip_prefix.ingress_routes :
-      "${var.ingress_routes[ingress_route].metadata.namespace}/${name}" => merge(
-        {
-          name      = name
-          namespace = var.ingress_routes[ingress_route].metadata.namespace
-        },
-        { for k, v in strip_prefix : k => v }
-      )...
-    }
-  ]...)
+variable "permanent" {
+  default     = false
+  description = "Set the permanent option to true to apply a permanent redirection"
+  type        = bool
+}
 
-  metadata = {
-    name      = "${each.value[0].name}-strip-prefix"
-    namespace = each.value[0].namespace
-  }
+variable "regex" {
+  description = "The regular expression to match and capture elements from the request URL"
+  type        = string
+}
 
-  force_slash = each.value[0].force_slash
-  prefixes    = each.value[0].prefixes
-
-  depends_on = [module.generic]
+variable "replacement" {
+  description = "How to modify the URL to have the new target URL"
+  type        = string
 }

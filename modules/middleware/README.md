@@ -1,4 +1,4 @@
-# Traefik Terraform module
+# Traefik Middleware Terraform module
 
 <!-- markdownlint-disable-next-line MD001 -->
 #### Table of Contents
@@ -11,28 +11,22 @@
 
 ## Description
 
-[Terraform](https://www.terraform.io/) module that allows you to deploy and configure [Træfik](https://traefik.io/traefik/)
-on [Kubernetes](https://kubernetes.io/) via [Helm](https://helm.sh/).
+[Terraform](https://www.terraform.io/) module that allows you to configure [Træfik](https://traefik.io/traefik/)
+Middleware on [Kubernetes](https://kubernetes.io/) via [Helm](https://helm.sh/).
 
 ## Usage
 
 ```terraform
-module "traefik" {
-  source  = "solution-libre/traefik/helm"
+module "traefik_middleware" {
+  source  = "solution-libre/traefik/helm//modules/middleware"
 
-  ingress = {
-    website = {
-      match = {
-        hosts = ["domain.tld"]
-      }
-      namespace    = "default"
-      service = {
-        name = "website"
-        port = 80
-      }
-      tls = {
-        secret_name = "domain.tld"
-      }
+  metadata = {
+    name = "my-middleware"
+  }
+
+  spec = {
+    headers = {
+      frameDeny = true
     }
   }
 }

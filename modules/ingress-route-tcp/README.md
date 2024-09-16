@@ -1,4 +1,4 @@
-# Traefik Terraform module
+# Traefik Ingress Route TCP Terraform module
 
 <!-- markdownlint-disable-next-line MD001 -->
 #### Table of Contents
@@ -11,27 +11,25 @@
 
 ## Description
 
-[Terraform](https://www.terraform.io/) module that allows you to deploy and configure [Træfik](https://traefik.io/traefik/)
-on [Kubernetes](https://kubernetes.io/) via [Helm](https://helm.sh/).
+[Terraform](https://www.terraform.io/) module that allows you to configure [Træfik](https://traefik.io/traefik/) Ingress
+Route TCP on [Kubernetes](https://kubernetes.io/) via [Helm](https://helm.sh/).
 
 ## Usage
 
 ```terraform
-module "traefik" {
-  source  = "solution-libre/traefik/helm"
+module "traefik_ingress_route_tcp" {
+  source  = "solution-libre/traefik/helm//modules/ingress-route-tcp"
 
-  ingress = {
-    website = {
-      match = {
-        hosts = ["domain.tld"]
-      }
-      namespace    = "default"
-      service = {
-        name = "website"
-        port = 80
-      }
-      tls = {
-        secret_name = "domain.tld"
+  metadata = {
+    name = "sftp"
+  }
+
+  spec = {
+    entry_points = ["sftp"]
+    routes = {
+      service = {
+        name = "sftp"
+        port = 22
       }
     }
   }

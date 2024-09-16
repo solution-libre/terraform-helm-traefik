@@ -17,29 +17,32 @@
  * along with Traefik Terraform module.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-module "strip_prefix_middleware" {
-  source = "./modules/middleware-strip-prefix"
+variable "metadata" {
+  description = "Traefik ingress route TCP metadata"
+  type = object({
+    annotations = optional(map(string), {})
+    name        = string
+    namespace   = optional(string, "default")
+  })
+}
 
-  for_each = merge([for name, strip_prefix in var.middlewares.strip_prefix :
-    {
-      for ingress_route in strip_prefix.ingress_routes :
-      "${var.ingress_routes[ingress_route].metadata.namespace}/${name}" => merge(
-        {
-          name      = name
-          namespace = var.ingress_routes[ingress_route].metadata.namespace
-        },
-        { for k, v in strip_prefix : k => v }
-      )...
-    }
-  ]...)
-
-  metadata = {
-    name      = "${each.value[0].name}-strip-prefix"
-    namespace = each.value[0].namespace
-  }
-
-  force_slash = each.value[0].force_slash
-  prefixes    = each.value[0].prefixes
-
-  depends_on = [module.generic]
+variable "spec" {
+  description = "Traefik ingress route TCP specifications"
+  type = object({
+    entry_points = list(string)
+    routes = object({
+      service = object({
+        name = string
+        port = number
+        proxy_protocol = optional(object({
+          enabled = optional(bool, false)
+          version = optional(number, 2)
+        }))
+      })
+      tls = optional(object({
+        enabled     = optional(bool, false)
+        secret_name = string
+      }))
+    })
+  })
 }

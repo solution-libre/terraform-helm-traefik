@@ -32,6 +32,17 @@ variable "deployment" {
   }
 }
 
+variable "experimental" {
+  default     = {}
+  description = "Traefik experimental features"
+  type = object({
+    plugins = optional(map(object({
+      module_name = string
+      version     = string
+    })), {}) # Enable traefik experimental plugins
+  })
+}
+
 variable "helm_release" {
   default     = {}
   description = "Traefik Helm release configuration"
@@ -55,9 +66,12 @@ variable "ingress_routes" {
       paths         = optional(list(string), [])
       path_prefixes = optional(list(string), [])
     })
-    namespace = string
-    priority  = optional(number)
+    metadata = object({
+      annotations = optional(map(string), {})
+      namespace   = string
+    })
     redirects = optional(object({
+      priority            = optional(number)
       from_non_www_to_www = optional(bool, false)
       from_www_to_non_www = optional(bool, false)
       regex = optional(map(object({
@@ -90,14 +104,17 @@ variable "ingress_routes_tcp" {
       name = string
       port = number
     })
-    namespace = string
-    proxy_protocol = optional(object({
-      enabled = optional(bool, false)
-      version = optional(number, 2)
-    }))
+    metadata = object({
+      annotations = optional(map(string), {})
+      namespace   = string
+    })
     service = object({
       name = string
       port = number
+      proxy_protocol = optional(object({
+        enabled = optional(bool, false)
+        version = optional(number, 2)
+      }))
     })
     tls = optional(object({
       enabled     = optional(bool, false)
@@ -165,6 +182,10 @@ variable "middlewares" {
   default     = {}
   description = "Traefik middlewares"
   type = object({
+    custom = optional(map(object({
+      ingress_routes = set(string)
+      spec           = map(any)
+    })), {})
     strip_prefix = optional(map(object({
       force_slash    = optional(bool) # The resulting stripped path is not the empty string, by replacing it with / when necessary
       ingress_routes = set(string)
@@ -253,6 +274,7 @@ variable "service" {
   type = object({
     annotations      = optional(map(string), {}) # Additional annotations applied to both TCP and UDP services
     ip_family_policy = optional(string)          # One of SingleStack, PreferDualStack, or RequireDualStack
+    type             = optional(string, "LoadBalancer")
   })
 }
 
