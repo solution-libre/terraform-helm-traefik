@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2023-2024 Solution Libre <contact@solution-libre.fr>
+ * Copyright (C) 2024 Solution Libre <contact@solution-libre.fr>
  * 
  * This file is part of Traefik Terraform module.
  * 
@@ -17,25 +17,36 @@
  * along with Traefik Terraform module.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-module "ingress_routes_tcp" {
-  source = "./modules/ingress-route-tcp"
-
-  for_each = var.ingress_routes_tcp
-
-  metadata = merge(
-    { name = each.key },
-    each.value.metadata
-  )
-
-  spec = {
-    entry_points = [each.value.entry_point.name]
-    routes = {
-      service = each.value.service
-      tls     = each.value.tls
+locals {
+  values = merge([for name, custom in var.middlewares.custom : {
+    for ingress_route in custom.ingress_routes :
+    "${var.ingress_routes[ingress_route].metadata.namespace}/${name}" => merge(
+      {
+        name      = name
+        namespace = var.ingress_routes[ingress_route].metadata.namespace
+      },
+      { for k, v in custom : k => v }
+    )...
     }
+  ]...)
+}
+
+
+module "custom_middleware" {
+  source = "./modules/middleware"
+
+  for_each = local.values
+
+  metadata = {
+    name      = "${each.value[0].name}-custom"
+    namespace = each.value[0].namespace
   }
 
-  depends_on = [
-    module.generic
-  ]
+  spec = each.value[0].spec
+
+  depends_on = [module.generic]
+}
+
+output "values" {
+  value = local.values
 }

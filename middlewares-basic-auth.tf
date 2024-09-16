@@ -23,23 +23,23 @@ module "basic_auth_middleware" {
   for_each = merge([for name, basic_auth in nonsensitive(var.middlewares_basic_auth) :
     {
       for ingress_route in basic_auth.ingress_routes :
-      "${var.ingress_routes[ingress_route].namespace}/${name}" => merge(
+      "${var.ingress_routes[ingress_route].metadata.namespace}/${name}" => merge(
         {
           name      = name
-          namespace = var.ingress_routes[ingress_route].namespace
+          namespace = var.ingress_routes[ingress_route].metadata.namespace
         },
         { for k, v in basic_auth : k => v }
       )
-    }
+    ... }
   ]...)
 
   metadata = {
-    name      = each.value.name
-    namespace = each.value.namespace
+    name      = each.value[0].name
+    namespace = each.value[0].namespace
   }
 
-  username = each.value.username
-  password = each.value.password
+  username = each.value[0].username
+  password = each.value[0].password
 
   depends_on = [module.generic]
 }

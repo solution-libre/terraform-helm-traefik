@@ -1,7 +1,12 @@
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRouteTCP
 metadata:
-  ${indent(2, yamlencode(metadata))}
+%{ if length(metadata.annotations) > 0 ~}
+  annotations:
+    ${indent(4, yamlencode(metadata.annotations))}
+%{ endif ~}
+  name: ${metadata.name}
+  namespace: ${metadata.namespace}
 spec:
   entryPoints:
     ${indent(4, yamlencode(spec.entry_points))}

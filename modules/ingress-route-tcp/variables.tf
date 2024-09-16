@@ -20,8 +20,9 @@
 variable "metadata" {
   description = "Traefik ingress route TCP metadata"
   type = object({
-    name      = string
-    namespace = optional(string, "default")
+    annotations = optional(map(string), {})
+    name        = string
+    namespace   = optional(string, "default")
   })
 }
 

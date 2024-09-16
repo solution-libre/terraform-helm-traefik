@@ -7,6 +7,15 @@ deployment:
   enabled: ${deployment.enabled}
   kind: ${deployment.kind}
   replicas: ${deployment.replicas}
+%{ if length(experimental.plugins) > 0 ~}
+experimental:
+  plugins: 
+%{ for name, plugin in experimental.plugins ~}
+    ${name}:
+      moduleName: ${plugin.module_name}
+      version: ${plugin.version}
+%{ endfor ~}
+%{ endif ~}
 ingressRoute:
   dashboard:
     enabled: false
@@ -83,7 +92,6 @@ providers:
     allowEmptyServices: ${kubernetes_providers.ingress.allow_empty_services}
 %{ endif ~}
 %{ endif ~}
-%{ if length(service.annotations) > 0 || service.ip_family_policy != null ~}
 service:
 %{ if length(service.annotations) > 0 ~}
   annotations:
@@ -94,4 +102,4 @@ service:
 %{ if service.ip_family_policy != null ~}
   ipFamilyPolicy: ${service.ip_family_policy}
 %{ endif ~}
-%{ endif ~}
+  type: ${service.type}

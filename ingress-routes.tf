@@ -22,10 +22,10 @@ module "ingress_routes" {
 
   for_each = var.ingress_routes
 
-  metadata = {
-    name      = each.key
-    namespace = each.value.namespace
-  }
+  metadata = merge(
+    { name = each.key },
+    each.value.metadata
+  )
 
   spec = {
     entry_points = ["websecure"]
@@ -41,9 +41,14 @@ module "ingress_routes" {
             (contains(values.ingress_routes, each.key) ? "${name}-basic-auth" : null)
           ]),
           compact([
+            for name, values in var.middlewares.custom :
+            (contains(values.ingress_routes, each.key) ? "${name}-custom" : null)
+          ]),
+          compact([
             for name, values in var.middlewares.strip_prefix :
             (contains(values.ingress_routes, each.key) ? "${name}-strip-prefix" : null)
-          ])
+          ]),
+          each.value.custom_middlewares
         )
       }
     )

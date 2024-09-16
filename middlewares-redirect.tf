@@ -24,14 +24,14 @@ module "redirect_regex_middleware" {
     for key, ingress_route in var.ingress_routes :
     merge(
       (ingress_route.redirects.from_non_www_to_www) ? {
-        "${ingress_route.namespace}/from-non-www-to-www" = {
+        "${ingress_route.metadata.namespace}/from-non-www-to-www" = {
           permanent   = true
           regex       = "^https?://(?:www\\.)?(.+)"
           replacement = "https://www.$1"
         }
       } : {},
       (ingress_route.redirects.from_www_to_non_www) ? {
-        "${ingress_route.namespace}/from-www-to-non-www" = {
+        "${ingress_route.metadata.namespace}/from-www-to-non-www" = {
           permanent   = true
           regex       = "^https?://www\\.(.+)"
           replacement = "https://$1"
@@ -39,7 +39,7 @@ module "redirect_regex_middleware" {
       } : {},
       {
         for name, redirect_regex in ingress_route.redirects.regex :
-        "${ingress_route.namespace}/${name}" => redirect_regex
+        "${ingress_route.metadata.namespace}/${name}" => redirect_regex
       }
     )
   ])...)
