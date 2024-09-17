@@ -31,8 +31,8 @@ module "ingress_routes_tcp" {
     entry_points = [each.value.entry_point.name]
     routes = {
       service = each.value.service
-      tls     = each.value.tls
     }
+    tls = each.value.tls
   }
 
   depends_on = [

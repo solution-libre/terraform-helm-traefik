@@ -39,10 +39,10 @@ variable "spec" {
           version = optional(number, 2)
         }))
       })
-      tls = optional(object({
-        enabled     = optional(bool, false)
-        secret_name = string
-      }))
     })
+    tls = optional(object({
+      enabled     = optional(bool, false)
+      secret_name = string
+    }))
   })
 }

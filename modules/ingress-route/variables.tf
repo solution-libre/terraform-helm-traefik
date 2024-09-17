@@ -43,9 +43,9 @@ variable "spec" {
         port   = number
         sticky = optional(bool, false)
       })
-      tls = object({
-        secret_name = string
-      })
+    })
+    tls = object({
+      secret_name = string
     })
   })
 }

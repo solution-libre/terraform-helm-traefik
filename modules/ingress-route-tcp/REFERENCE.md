@@ -33,7 +33,7 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_metadata"></a> [metadata](#input\_metadata) | Traefik ingress route TCP metadata | <pre>object({<br>    annotations = optional(map(string), {})<br>    name        = string<br>    namespace   = optional(string, "default")<br>  })</pre> | n/a | yes |
-| <a name="input_spec"></a> [spec](#input\_spec) | Traefik ingress route TCP specifications | <pre>object({<br>    entry_points = list(string)<br>    routes = object({<br>      service = object({<br>        name = string<br>        port = number<br>        proxy_protocol = optional(object({<br>          enabled = optional(bool, false)<br>          version = optional(number, 2)<br>        }))<br>      })<br>      tls = optional(object({<br>        enabled     = optional(bool, false)<br>        secret_name = string<br>      }))<br>    })<br>  })</pre> | n/a | yes |
+| <a name="input_spec"></a> [spec](#input\_spec) | Traefik ingress route TCP specifications | <pre>object({<br>    entry_points = list(string)<br>    routes = object({<br>      service = object({<br>        name = string<br>        port = number<br>        proxy_protocol = optional(object({<br>          enabled = optional(bool, false)<br>          version = optional(number, 2)<br>        }))<br>      })<br>    })<br>    tls = optional(object({<br>      enabled     = optional(bool, false)<br>      secret_name = string<br>    }))<br>  })</pre> | n/a | yes |
 
 ## Outputs
 

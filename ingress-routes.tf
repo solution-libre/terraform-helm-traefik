@@ -30,7 +30,7 @@ module "ingress_routes" {
   spec = {
     entry_points = ["websecure"]
     routes = merge(
-      { for k, v in each.value : k => v },
+      { for k, v in each.value : k => v if !contains(["tls", "metadata"], k) },
       {
         middlewares = concat(
           each.value.redirects.from_non_www_to_www ? ["from-non-www-to-www-redirect"] : [],
@@ -52,6 +52,7 @@ module "ingress_routes" {
         )
       }
     )
+    tls = each.value.tls
   }
 
   depends_on = [
