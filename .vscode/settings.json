@@ -1,14 +1,9 @@
 {
-    "licenser.projectName": "Traefik Terraform module",
-    "licenser.license": "GPLv3",
-    "[terraform]": {
-        "editor.defaultFormatter": "hashicorp.terraform",
-        "editor.formatOnSave": true,
-        "editor.formatOnSaveMode": "file"
-      },
-      "[terraform-vars]": {
-        "editor.defaultFormatter": "hashicorp.terraform",
-        "editor.formatOnSave": true,
-        "editor.formatOnSaveMode": "file"
-      }
+	"licenser.projectName": "Scaleway Network Terrafom module",
+	"licenser.license": "GPLv3",
+	"[opentofu][opentofu-vars]": {
+		"editor.defaultFormatter": "opentofu.vscode-opentofu",
+		"editor.formatOnSave": true,
+		"editor.formatOnSaveMode": "file"
+	}
 }

@@ -2,8 +2,7 @@
 	"recommendations": [
 		"gitlab.gitlab-workflow",
 		"ymotongpoo.licenser",
-		"hashicorp.terraform",
-		"tfsec.tfsec",
+		"OpenTofu.vscode-opentofu",
 		"ms-kubernetes-tools.vscode-kubernetes-tools",
 		"davidanson.vscode-markdownlint",
 		"redhat.vscode-yaml"

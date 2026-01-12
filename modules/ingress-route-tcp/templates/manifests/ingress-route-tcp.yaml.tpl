@@ -21,5 +21,8 @@ spec:
 %{ endif ~}
 %{ if try(spec.tls.enabled, false) ~}
   tls:
+    passthrough: ${spec.tls.passthrough}
+%{ if spec.tls.secret_name != null ~}
     secretName: ${spec.tls.secret_name}
+%{ endif ~}
 %{ endif ~}

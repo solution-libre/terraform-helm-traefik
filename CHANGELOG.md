@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- markdownlint-configure-file { "MD024": { "siblings_only": true } } -->
 
+## [0.17.2] 2026-01-12
+
+### Added
+
+- `spec.tls.secret_name` attribute of input variable `ingress_routes_tcp`
+
 ## [0.17.1] 2024-09-17
 
 ### Fixed
@@ -280,6 +286,7 @@ attribute `from_non_www_to_www` and `from_www_to_non_www`
 
 - Terraform module creation
 
+[0.17.2]: https://usine.solution-libre.fr/french-high-availability-multi-cloud-hosting/terraform-modules/traefik/-/compare/v0.17.1...v0.17.2
 [0.17.1]: https://usine.solution-libre.fr/french-high-availability-multi-cloud-hosting/terraform-modules/traefik/-/compare/v0.17.0...v0.17.1
 [0.17.0]: https://usine.solution-libre.fr/french-high-availability-multi-cloud-hosting/terraform-modules/traefik/-/compare/v0.16.0...v0.17.0
 [0.16.0]: https://usine.solution-libre.fr/french-high-availability-multi-cloud-hosting/terraform-modules/traefik/-/compare/v0.15.3...v0.16.0

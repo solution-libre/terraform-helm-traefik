@@ -1,4 +1,4 @@
-# Copyright (C) 2022-2023 Solution Libre <contact@solution-libre.fr>
+# Copyright (C) 2022-2025 Solution Libre <contact@solution-libre.fr>
 # 
 # This file is part of Traefik Terraform module.
 # 
@@ -16,7 +16,11 @@
 # along with Traefik Terraform module.  If not, see <https://www.gnu.org/licenses/>.
 
 include:
-  - template: Terraform/Base.latest.gitlab-ci.yml   # https://gitlab.com/gitlab-org/gitlab/blob/master/lib/gitlab/ci/templates/Terraform/Base.latest.gitlab-ci.yml
+  - component: $CI_SERVER_FQDN/gitlab/components/lint/markdown@0.5.0
+    inputs:
+      stage: validate
+  - component: usine.solution-libre.fr/gitlab/components/changelog/parse@0.1.2
+  - template: OpenTofu/Base.latest.gitlab-ci.yml    # https://gitlab.com/gitlab-org/gitlab/blob/master/lib/gitlab/ci/templates/OpenTofu/Base.latest.gitlab-ci.yml
   - template: Terraform/Module-Base.gitlab-ci.yml   # https://gitlab.com/gitlab-org/gitlab/blob/master/lib/gitlab/ci/templates/Terraform/Module-Base.gitlab-ci.yml
   # - template: Jobs/Code-Quality.gitlab-ci.yml       # https://gitlab.com/gitlab-org/gitlab/blob/master/lib/gitlab/ci/templates/Jobs/Code-Quality.gitlab-ci.yml
   - template: Jobs/Code-Intelligence.gitlab-ci.yml  # https://gitlab.com/gitlab-org/gitlab/blob/master/lib/gitlab/ci/templates/Jobs/Code-Intelligence.gitlab-ci.yml
@@ -30,25 +34,16 @@ stages:
   - release
 
 variables:
+  GITLAB_OPENTOFU_IMAGE_REGISTRY_BASE: registry.gitlab.com/components/opentofu
+  TERRAFORM_MODULE_NAME: traefik
   TERRAFORM_MODULE_SYSTEM: helm
 
 fmt:
-  extends: .terraform:fmt
+  extends: .opentofu:fmt
   needs: []
 
 validate:
-  extends: .terraform:validate
-  needs: []
-
-markdownlint:
-  stage: validate
-  image: registry.gitlab.com/pipeline-components/markdownlint-cli2:latest
-  cache: []
-  script:
-    - markdownlint-cli2 '**/*.md'
-  rules:
-    - changes:
-      - '**/*.md'
+  extends: .opentofu:validate
   needs: []
 
 # code_quality:
@@ -60,20 +55,6 @@ kics-iac-sast:
   artifacts:
     paths:
       - gl-sast-report.json
-
-changelog:
-  stage: test
-  image: docker
-  artifacts:
-    paths:
-      - release-note.md
-  cache: []
-  before_script:
-    - docker run --rm sean0x42/markdown-extract:v2 --version
-  script:
-    - docker run -v $PWD:/opt sean0x42/markdown-extract:v2 -n "$(echo "$CI_COMMIT_TAG" | sed -e 's/^v//')" /opt/CHANGELOG.md > release-note.md
-  rules:
-    - if: $CI_COMMIT_TAG
 
 upload:
   extends: .terraform-module:deploy
@@ -89,7 +70,7 @@ release:
   image: registry.gitlab.com/gitlab-org/release-cli:latest
   cache: []
   needs:
-    - changelog
+    - parse changelog
     - upload
   rules:
     - if: $CI_COMMIT_TAG

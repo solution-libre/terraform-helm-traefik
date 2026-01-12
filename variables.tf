@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2022-2024 Solution Libre <contact@solution-libre.fr>
+ * Copyright (C) 2022-2025 Solution Libre <contact@solution-libre.fr>
  * 
  * This file is part of Traefik Terraform module.
  * 
@@ -118,7 +118,8 @@ variable "ingress_routes_tcp" {
     })
     tls = optional(object({
       enabled     = optional(bool, false)
-      secret_name = string
+      passthrough = optional(bool, false)
+      secret_name = optional(string)
     }))
   }))
 }
