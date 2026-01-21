@@ -3,6 +3,7 @@
 		"gitlab.gitlab-workflow",
 		"ymotongpoo.licenser",
 		"OpenTofu.vscode-opentofu",
+		"tfsec.tfsec",
 		"ms-kubernetes-tools.vscode-kubernetes-tools",
 		"davidanson.vscode-markdownlint",
 		"redhat.vscode-yaml"

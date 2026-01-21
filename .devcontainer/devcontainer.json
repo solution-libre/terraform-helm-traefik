@@ -1,7 +1,7 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/devcontainers/templates/tree/main/src/go
 {
-	"name": "Traefik penTofu module",
+	"name": "Traefik Terraform module",
 	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
 	"image": "registry.solution-libre.fr/docker/opentofu-for-vscode:0.3.0",
 

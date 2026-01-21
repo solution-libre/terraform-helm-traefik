@@ -1,8 +1,5 @@
 additionalArguments:
   - --entrypoints.web.http.redirections.entrypoint.priority=10
-%{ for value in ingress_routes_tcp ~}
-  - --entrypoints.${value.entry_point.name}.address=:${value.entry_point.port}/tcp
-%{ endfor ~}
 deployment:
   enabled: ${deployment.enabled}
   kind: ${deployment.kind}
@@ -75,6 +72,8 @@ ports:
     expose: true
     exposedPort: ${value.entry_point.port}
     protocol: TCP
+    proxyProtocol:
+      trustedIPs: ${jsonencode(compact(["127.0.0.1/32", "10.0.0.0/8", "100.64.0.0/10", ports.lb_ip]))}
 %{ endfor ~}
 %{ if kubernetes_providers.crd != null || kubernetes_providers.ingress != null ~}
 providers:
